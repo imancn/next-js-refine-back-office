@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useI18n } from '@/lib/i18n';
 import { Layout } from '@/components/layout/Layout';
 import { DataTable } from '@/components/tables/DataTable';
@@ -15,8 +15,8 @@ import { cn, buttonVariants, text, grid } from '@/lib/utils';
 import { Plus, BarChart3, Table } from 'lucide-react';
 
 export default function EntityListPage() {
-  const { entityName } = useParams<{ entityName: string }>();
   const router = useRouter();
+  const { entityName } = router.query;
   const { t } = useI18n();
   
   const [viewMode, setViewMode] = useState<'table' | 'charts'>('table');
@@ -33,6 +33,18 @@ export default function EntityListPage() {
   });
 
   const entityConfig = getEntityConfig(entityName as string);
+
+  // Don't render until we have the entityName from the router
+  if (!entityName || typeof entityName !== 'string') {
+    return (
+      <Layout>
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground mt-4">Loading...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   // Mock data generation based on entity type
   const generateMockData = (count: number) => {
