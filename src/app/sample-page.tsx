@@ -1,0 +1,575 @@
+'use client';
+
+import React, { useState } from 'react';
+import { BarChart } from '../../refine-backoffice/src/components/charts/BarChart';
+import { LineChart } from '../../refine-backoffice/src/components/charts/LineChart';
+import { PieChart } from '../../refine-backoffice/src/components/charts/PieChart';
+import { EntityForm } from '../../refine-backoffice/src/components/forms/EntityForm';
+import { HistoryViewer } from '../../refine-backoffice/src/components/history/HistoryViewer';
+import { Header } from '../../refine-backoffice/src/components/layout/Header';
+import { Layout } from '../../refine-backoffice/src/components/layout/Layout';
+import { Sidebar } from '../../refine-backoffice/src/components/layout/Sidebar';
+import { DataTable } from '../../refine-backoffice/src/components/tables/DataTable';
+import { EntityConfig, EntityField, TableState, PaginationParams, SortParams, FilterParams, EntityHistory } from '../../refine-backoffice/src/types';
+import { buttonVariants, cardVariants, badgeVariants, text } from '../../refine-backoffice/src/lib/utils';
+import { cn } from '../../refine-backoffice/src/lib/utils';
+import { 
+  Plus, 
+  Download, 
+  Upload, 
+  RefreshCw, 
+  Settings, 
+  Bell, 
+  Search, 
+  Filter,
+  Eye,
+  Edit,
+  Trash2,
+  MoreHorizontal,
+  TrendingUp,
+  Users,
+  Package,
+  ShoppingCart,
+  DollarSign
+} from 'lucide-react';
+
+// Sample data for charts
+const sampleChartData = [
+  { month: 'Jan', users: 120, products: 85, orders: 45, revenue: 12500 },
+  { month: 'Feb', users: 150, products: 92, orders: 52, revenue: 14200 },
+  { month: 'Mar', users: 180, products: 98, orders: 58, revenue: 15800 },
+  { month: 'Apr', users: 210, products: 105, orders: 65, revenue: 17200 },
+  { month: 'May', users: 240, products: 112, orders: 72, revenue: 18900 },
+  { month: 'Jun', users: 270, products: 118, orders: 78, revenue: 20500 },
+];
+
+const pieChartData = [
+  { name: 'Electronics', value: 35, color: '#3b82f6' },
+  { name: 'Clothing', value: 25, color: '#10b981' },
+  { name: 'Books', value: 20, color: '#f59e0b' },
+  { name: 'Home & Garden', value: 15, color: '#ef4444' },
+  { name: 'Sports', value: 5, color: '#8b5cf6' },
+];
+
+// Sample data for tables
+const sampleUsers = [
+  { id: '1', email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe', role: 'admin', isActive: true, createdAt: '2024-01-15', updatedAt: '2024-01-15' },
+  { id: '2', email: 'jane.smith@example.com', firstName: 'Jane', lastName: 'Smith', role: 'manager', isActive: true, createdAt: '2024-01-20', updatedAt: '2024-01-20' },
+  { id: '3', email: 'bob.wilson@example.com', firstName: 'Bob', lastName: 'Wilson', role: 'user', isActive: false, createdAt: '2024-02-01', updatedAt: '2024-02-01' },
+  { id: '4', email: 'alice.brown@example.com', firstName: 'Alice', lastName: 'Brown', role: 'user', isActive: true, createdAt: '2024-02-05', updatedAt: '2024-02-05' },
+  { id: '5', email: 'charlie.davis@example.com', firstName: 'Charlie', lastName: 'Davis', role: 'manager', isActive: true, createdAt: '2024-02-10', updatedAt: '2024-02-10' },
+];
+
+const sampleProducts = [
+  { id: '1', name: 'Laptop Pro', description: 'High-performance laptop for professionals', price: 1299, category: 'Electronics', stock: 25, sku: 'LAP-001', image: 'https://example.com/laptop.jpg', createdAt: '2024-01-10', updatedAt: '2024-01-10' },
+  { id: '2', name: 'Wireless Headphones', description: 'Noise-cancelling wireless headphones', price: 199, category: 'Electronics', stock: 50, sku: 'AUD-001', image: 'https://example.com/headphones.jpg', createdAt: '2024-01-12', updatedAt: '2024-01-12' },
+  { id: '3', name: 'Designer T-Shirt', description: 'Premium cotton designer t-shirt', price: 49, category: 'Clothing', stock: 100, sku: 'CLO-001', image: 'https://example.com/tshirt.jpg', createdAt: '2024-01-15', updatedAt: '2024-01-15' },
+  { id: '4', name: 'Coffee Maker', description: 'Automatic coffee maker with timer', price: 89, category: 'Home & Garden', stock: 30, sku: 'HOM-001', image: 'https://example.com/coffee.jpg', createdAt: '2024-01-18', updatedAt: '2024-01-18' },
+  { id: '5', name: 'Fitness Tracker', description: 'Smart fitness tracker with heart rate monitor', price: 149, category: 'Sports', stock: 75, sku: 'SPO-001', image: 'https://example.com/tracker.jpg', createdAt: '2024-01-22', updatedAt: '2024-01-22' },
+];
+
+const sampleOrders = [
+  { id: '1', orderNumber: 'ORD-001', customerId: 'CUST-001', customerName: 'John Smith', total: 1299, status: 'delivered', createdAt: '2024-01-15', updatedAt: '2024-01-15' },
+  { id: '2', orderNumber: 'ORD-002', customerId: 'CUST-002', customerName: 'Sarah Johnson', total: 248, status: 'shipped', createdAt: '2024-01-18', updatedAt: '2024-01-18' },
+  { id: '3', orderNumber: 'ORD-003', customerId: 'CUST-003', customerName: 'Mike Wilson', total: 89, status: 'processing', createdAt: '2024-01-20', updatedAt: '2024-01-20' },
+  { id: '4', orderNumber: 'ORD-004', customerId: 'CUST-004', customerName: 'Emily Davis', total: 198, status: 'pending', createdAt: '2024-01-22', updatedAt: '2024-01-22' },
+  { id: '5', orderNumber: 'ORD-005', customerId: 'CUST-005', customerName: 'David Brown', total: 447, status: 'delivered', createdAt: '2024-01-25', updatedAt: '2024-01-25' },
+];
+
+// Sample history data
+const sampleHistory: EntityHistory[] = [
+  {
+    id: '1',
+    entityId: '1',
+    entityType: 'users',
+    action: 'CREATE',
+    changes: { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },
+    createdAt: '2024-01-15T10:00:00Z',
+    updatedAt: '2024-01-15T10:00:00Z'
+  },
+  {
+    id: '2',
+    entityId: '1',
+    entityType: 'users',
+    action: 'UPDATE',
+    changes: { role: 'admin' },
+    previousValues: { role: 'user' },
+    newValues: { role: 'admin' },
+    createdAt: '2024-01-16T14:30:00Z',
+    updatedAt: '2024-01-16T14:30:00Z'
+  },
+  {
+    id: '3',
+    entityId: '2',
+    entityType: 'products',
+    action: 'CREATE',
+    changes: { name: 'Laptop Pro', price: 1299, category: 'Electronics' },
+    createdAt: '2024-01-10T09:15:00Z',
+    updatedAt: '2024-01-10T09:15:00Z'
+  }
+];
+
+// Sample entity configs
+const userEntityConfig: EntityConfig = {
+  name: 'users',
+  apiPrefix: '/api/users',
+  displayName: 'Users',
+  icon: 'Users',
+  description: 'Manage system users and their roles',
+  fields: [
+    { name: 'id', type: 'string', label: 'ID', displayInTable: true, displayInForm: false, displayInShow: true },
+    { name: 'email', type: 'email', label: 'Email', required: true, displayInTable: true, displayInForm: true, displayInShow: true },
+    { name: 'firstName', type: 'string', label: 'First Name', required: true, displayInTable: true, displayInForm: true, displayInShow: true },
+    { name: 'lastName', type: 'string', label: 'Last Name', required: true, displayInTable: true, displayInForm: true, displayInShow: true },
+    { name: 'role', type: 'select', label: 'Role', required: true, displayInTable: true, displayInForm: true, displayInShow: true, options: [
+      { value: 'admin', label: 'Admin' },
+      { value: 'user', label: 'User' },
+      { value: 'manager', label: 'Manager' }
+    ]},
+    { name: 'avatar', type: 'url', label: 'Avatar', displayInTable: false, displayInForm: true, displayInShow: true },
+    { name: 'isActive', type: 'boolean', label: 'Active', displayInTable: true, displayInForm: true, displayInShow: true },
+    { name: 'createdAt', type: 'date', label: 'Created At', displayInTable: true, displayInForm: false, displayInShow: true },
+    { name: 'updatedAt', type: 'date', label: 'Updated At', displayInTable: false, displayInForm: false, displayInShow: true }
+  ]
+};
+
+export default function SamplePage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [showForm, setShowForm] = useState(false);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const [selectedEntity, setSelectedEntity] = useState<EntityConfig | null>(null);
+
+  // Table state
+  const [tableState, setTableState] = useState<TableState>({
+    pagination: { page: 1, pageSize: 10 },
+    sorting: [],
+    filters: []
+  });
+
+  const handleMenuToggle = () => setIsMenuOpen(!isMenuOpen);
+  const handleFormSubmit = (data: Record<string, any>) => {
+    console.log('Form submitted:', data);
+    setShowForm(false);
+  };
+
+  const handleRowAction = (action: string, row: any) => {
+    console.log('Row action:', action, row);
+    if (action === 'edit') {
+      setFormMode('edit');
+      setSelectedEntity(userEntityConfig);
+      setShowForm(true);
+    }
+  };
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: TrendingUp },
+    { id: 'charts', label: 'Charts & Analytics', icon: BarChart },
+    { id: 'tables', label: 'Data Tables', icon: DataTable },
+    { id: 'forms', label: 'Forms', icon: EntityForm },
+    { id: 'history', label: 'History', icon: HistoryViewer },
+    { id: 'components', label: 'UI Components', icon: Settings }
+  ];
+
+  return (
+    <Layout>
+      <Header onMenuToggle={handleMenuToggle} isMenuOpen={isMenuOpen} />
+      <div className="flex h-screen bg-background">
+        <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+        
+        <main className="flex-1 overflow-auto">
+          <div className="container mx-auto p-6">
+            {/* Page Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-foreground mb-2">Component Showcase</h1>
+              <p className="text-muted-foreground">Explore all available components and features</p>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="mb-6">
+              <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={cn(
+                        'flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors',
+                        activeTab === tab.id
+                          ? 'bg-background text-foreground shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground'
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className={cn(cardVariants(), 'p-6')}>
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-blue-100 rounded-lg">
+                        <Users className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Total Users</p>
+                        <p className="text-2xl font-bold">1,234</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className={cn(cardVariants(), 'p-6')}>
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-green-100 rounded-lg">
+                        <Package className="h-6 w-6 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Total Products</p>
+                        <p className="text-2xl font-bold">567</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className={cn(cardVariants(), 'p-6')}>
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-purple-100 rounded-lg">
+                        <ShoppingCart className="h-6 w-6 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Total Orders</p>
+                        <p className="text-2xl font-bold">890</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className={cn(cardVariants(), 'p-6')}>
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-yellow-100 rounded-lg">
+                        <DollarSign className="h-6 w-6 text-yellow-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Revenue</p>
+                        <p className="text-2xl font-bold">$45,678</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <button className={cn(buttonVariants(), 'flex items-center space-x-2')}>
+                      <Plus className="h-4 w-4" />
+                      <span>Add User</span>
+                    </button>
+                    <button className={cn(buttonVariants({ variant: 'outline' }), 'flex items-center space-x-2')}>
+                      <Download className="h-4 w-4" />
+                      <span>Export Data</span>
+                    </button>
+                    <button className={cn(buttonVariants({ variant: 'outline' }), 'flex items-center space-x-2')}>
+                      <Upload className="h-4 w-4" />
+                      <span>Import Data</span>
+                    </button>
+                    <button className={cn(buttonVariants({ variant: 'outline' }), 'flex items-center space-x-2')}>
+                      <RefreshCw className="h-4 w-4" />
+                      <span>Refresh</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'charts' && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold mb-4">Charts & Analytics</h2>
+                
+                {/* Bar Chart */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Monthly Metrics</h3>
+                  <BarChart
+                    data={sampleChartData}
+                    xKey="month"
+                    yKeys={[
+                      { key: 'users', color: '#3b82f6', label: 'Users' },
+                      { key: 'products', color: '#10b981', label: 'Products' },
+                      { key: 'orders', color: '#f59e0b', label: 'Orders' },
+                      { key: 'revenue', color: '#ef4444', label: 'Revenue' }
+                    ]}
+                    title="Monthly Performance Overview"
+                    height={400}
+                    showGrid={true}
+                    showLegend={true}
+                    showTooltip={true}
+                    formatYAxis={(value) => `$${value.toLocaleString()}`}
+                  />
+                </div>
+
+                {/* Line Chart */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Growth Trends</h3>
+                  <LineChart
+                    data={sampleChartData}
+                    xKey="month"
+                    yKeys={[
+                      { key: 'users', color: '#3b82f6', label: 'Users' },
+                      { key: 'revenue', color: '#10b981', label: 'Revenue' }
+                    ]}
+                    title="User & Revenue Growth"
+                    height={300}
+                    showGrid={true}
+                    showLegend={true}
+                    showTooltip={true}
+                    formatYAxis={(value) => `$${value.toLocaleString()}`}
+                  />
+                </div>
+
+                {/* Pie Chart */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Product Categories</h3>
+                  <PieChart
+                    data={pieChartData}
+                    title="Product Distribution by Category"
+                    height={300}
+                    showLegend={true}
+                    showTooltip={true}
+                  />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'tables' && (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold">Data Tables</h2>
+                  <button 
+                    onClick={() => {
+                      setSelectedEntity(userEntityConfig);
+                      setFormMode('create');
+                      setShowForm(true);
+                    }}
+                    className={cn(buttonVariants(), 'flex items-center space-x-2')}
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Add User</span>
+                  </button>
+                </div>
+
+                {/* Users Table */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Users Table</h3>
+                  <DataTable
+                    data={sampleUsers}
+                    total={sampleUsers.length}
+                    fields={userEntityConfig.fields}
+                    onPaginationChange={(pagination) => setTableState(prev => ({ ...prev, pagination }))}
+                    onSortChange={(sorting) => setTableState(prev => ({ ...prev, sorting }))}
+                    onFilterChange={(filters) => setTableState(prev => ({ ...prev, filters }))}
+                    onRowAction={handleRowAction}
+                    tableState={tableState}
+                    entityName="users"
+                  />
+                </div>
+
+                {/* Products Table */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Products Table</h3>
+                  <DataTable
+                    data={sampleProducts}
+                    total={sampleProducts.length}
+                    fields={userEntityConfig.fields.filter(f => ['id', 'name', 'price', 'category', 'stock', 'sku'].includes(f.name))}
+                    onPaginationChange={(pagination) => setTableState(prev => ({ ...prev, pagination }))}
+                    onSortChange={(sorting) => setTableState(prev => ({ ...prev, sorting }))}
+                    onFilterChange={(filters) => setTableState(prev => ({ ...prev, filters }))}
+                    onRowAction={handleRowAction}
+                    tableState={tableState}
+                    entityName="products"
+                  />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'forms' && (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold">Forms</h2>
+                  <button 
+                    onClick={() => {
+                      setSelectedEntity(userEntityConfig);
+                      setFormMode('create');
+                      setShowForm(true);
+                    }}
+                    className={cn(buttonVariants(), 'flex items-center space-x-2')}
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Show Form</span>
+                  </button>
+                </div>
+
+                {showForm && selectedEntity && (
+                  <div className={cn(cardVariants(), 'p-6')}>
+                    <h3 className="text-lg font-semibold mb-4">
+                      {formMode === 'create' ? 'Create' : 'Edit'} {selectedEntity.displayName}
+                    </h3>
+                    <EntityForm
+                      entityConfig={selectedEntity}
+                      onSubmit={handleFormSubmit}
+                      onCancel={() => setShowForm(false)}
+                      mode={formMode}
+                    />
+                  </div>
+                )}
+
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Form Features</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-medium mb-2">Supported Field Types:</h4>
+                      <ul className="space-y-1 text-sm text-muted-foreground">
+                        <li>• String, Email, URL</li>
+                        <li>• Number, Boolean</li>
+                        <li>• Date, Select</li>
+                        <li>• Textarea</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">Form Features:</h4>
+                      <ul className="space-y-1 text-sm text-muted-foreground">
+                        <li>• Validation with Zod</li>
+                        <li>• Required field handling</li>
+                        <li>• Password visibility toggle</li>
+                        <li>• Responsive design</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'history' && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold">History & Audit Trail</h2>
+                
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Entity Change History</h3>
+                  <HistoryViewer
+                    history={sampleHistory}
+                    fields={userEntityConfig.fields}
+                    entityName="users"
+                  />
+                </div>
+
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">History Features</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-medium mb-2">Tracked Actions:</h4>
+                      <ul className="space-y-1 text-sm text-muted-foreground">
+                        <li>• CREATE - New entity creation</li>
+                        <li>• UPDATE - Field value changes</li>
+                        <li>• DELETE - Entity removal</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">History Features:</h4>
+                      <ul className="space-y-1 text-sm text-muted-foreground">
+                        <li>• Expandable change details</li>
+                        <li>• Before/after value comparison</li>
+                        <li>• Timestamp and user tracking</li>
+                        <li>• Action type indicators</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'components' && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold">UI Components</h2>
+                
+                {/* Buttons */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Button Variants</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <button className={cn(buttonVariants())}>Default Button</button>
+                    <button className={cn(buttonVariants({ variant: 'secondary' }))}>Secondary</button>
+                    <button className={cn(buttonVariants({ variant: 'outline' }))}>Outline</button>
+                    <button className={cn(buttonVariants({ variant: 'destructive' }))}>Destructive</button>
+                    <button className={cn(buttonVariants({ variant: 'ghost' }))}>Ghost</button>
+                    <button className={cn(buttonVariants({ variant: 'link' }))}>Link</button>
+                  </div>
+                  
+                  <h4 className="font-medium mt-6 mb-3">Button Sizes</h4>
+                  <div className="flex flex-wrap gap-3 items-center">
+                    <button className={cn(buttonVariants({ size: 'sm' }))}>Small</button>
+                    <button className={cn(buttonVariants({ size: 'default' }))}>Default</button>
+                    <button className={cn(buttonVariants({ size: 'lg' }))}>Large</button>
+                    <button className={cn(buttonVariants({ size: 'icon' }))}>
+                      <Settings className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Badges */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Badge Variants</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <span className={cn(badgeVariants())}>Default</span>
+                    <span className={cn(badgeVariants({ variant: 'secondary' }))}>Secondary</span>
+                    <span className={cn(badgeVariants({ variant: 'destructive' }))}>Destructive</span>
+                    <span className={cn(badgeVariants({ variant: 'outline' }))}>Outline</span>
+                    <span className={cn(badgeVariants({ variant: 'success' }))}>Success</span>
+                    <span className={cn(badgeVariants({ variant: 'warning' }))}>Warning</span>
+                    <span className={cn(badgeVariants({ variant: 'info' }))}>Info</span>
+                  </div>
+                </div>
+
+                {/* Cards */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Card Variants</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className={cn(cardVariants(), 'p-4')}>
+                      <h4 className="font-medium mb-2">Default Card</h4>
+                      <p className="text-sm text-muted-foreground">Standard card with default styling</p>
+                    </div>
+                    <div className={cn(cardVariants({ variant: 'elevated' }), 'p-4')}>
+                      <h4 className="font-medium mb-2">Elevated Card</h4>
+                      <p className="text-sm text-muted-foreground">Card with enhanced shadow</p>
+                    </div>
+                    <div className={cn(cardVariants({ variant: 'outline' }), 'p-4')}>
+                      <h4 className="font-medium mb-2">Outline Card</h4>
+                      <p className="text-sm text-muted-foreground">Card with prominent border</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Typography */}
+                <div className={cn(cardVariants(), 'p-6')}>
+                  <h3 className="text-lg font-semibold mb-4">Typography</h3>
+                  <div className="space-y-4">
+                    <h1 className={cn(text.h1)}>Heading 1 - Large Title</h1>
+                    <h2 className={cn(text.h2)}>Heading 2 - Section Title</h2>
+                    <h3 className={cn(text.h3)}>Heading 3 - Subsection</h3>
+                    <h4 className={cn(text.h4)}>Heading 4 - Card Title</h4>
+                    <p className={cn(text.base)}>Base text for regular content</p>
+                    <p className={cn(text.small)}>Small text for captions and metadata</p>
+                    <p className={cn(text.muted)}>Muted text for secondary information</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </Layout>
+  );
+}

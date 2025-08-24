@@ -1,9 +1,23 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        {/* Component Showcase Link */}
+        <div className="w-full max-w-md mx-auto text-center mb-8">
+          <Link
+            href="/sample-page"
+            className="inline-flex items-center justify-center rounded-full bg-blue-600 text-white px-6 py-3 text-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+          >
+            🎨 View Component Showcase
+          </Link>
+          <p className="text-sm text-gray-600 mt-2">
+            Explore all available components and features
+          </p>
+        </div>
+
         <Image
           className="dark:invert"
           src="/next.svg"
