@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Refine Backoffice Application
 
-## Getting Started
+A modern backoffice application built with [Next.js 15](https://nextjs.org) and [Refine](https://refine.dev), featuring a clean dashboard interface with data visualization capabilities.
 
-First, run the development server:
+## 🚀 Features
 
+- **Next.js 15** with App Router and Turbopack for fast development
+- **Refine Framework** for rapid CRUD application development
+- **TypeScript** for type safety
+- **Tailwind CSS** for modern, responsive styling
+- **React Hook Form** for efficient form handling
+- **React Table** for data table management
+- **Tremor** for beautiful dashboard components
+- **Recharts** for data visualization
+
+## 📋 Prerequisites
+
+- Node.js 18+ 
+- npm, yarn, or pnpm package manager
+
+## 🛠️ Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone <your-repo-url>
+   cd next-js-refine-back-office
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install --legacy-peer-deps
+   # or
+   yarn install
+   ```
+
+## 🚀 Available Scripts
+
+### Development
 ```bash
+# Start development server with Turbopack
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The development server will start at [http://localhost:3000](http://localhost:3000) with hot reloading enabled.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production
+```bash
+# Build the application
+npm run build
+# or
+yarn build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Start production server
+npm start
+# or
+yarn start
+```
 
-## Learn More
+### Code Quality
+```bash
+# Run ESLint
+npm run lint
+# or
+yarn lint
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 🏗️ Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # Root layout component
+│   ├── page.tsx           # Main dashboard page
+│   ├── globals.css        # Global styles
+│   └── favicon.ico        # App icon
+├── public/                 # Static assets
+└── refine-backoffice/      # Refine-specific configurations
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎨 Technologies Used
 
-## Deploy on Vercel
+- **Frontend Framework:** Next.js 15 with React 18
+- **UI Framework:** Tailwind CSS 4
+- **Data Management:** Refine Core
+- **Forms:** React Hook Form
+- **Tables:** TanStack React Table
+- **Charts:** Recharts
+- **Dashboard Components:** Tremor
+- **Language:** TypeScript
+- **Build Tool:** Turbopack
+
+## 🌐 Development
+
+1. Start the development server: `npm run dev`
+2. Open [http://localhost:3000](http://localhost:3000) in your browser
+3. The page will auto-update as you edit files
+
+## 📦 Building for Production
+
+Before starting the production server, you must build the application:
+
+```bash
+# Build the app
+npm run build
+
+# Start production server
+npm start
+```
+
+## 🔧 Configuration
+
+- **Next.js Config:** `next.config.ts`
+- **TypeScript Config:** `tsconfig.json`
+- **ESLint Config:** `eslint.config.mjs`
+- **PostCSS Config:** `postcss.config.mjs`
+
+## 📚 Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API
+- [Refine Documentation](https://refine.dev/docs) - Learn about Refine framework
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - Learn about Tailwind CSS
+- [Tremor Documentation](https://www.tremor.so/docs) - Learn about Tremor components
+
+## 🚀 Deployment
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## 📄 License
+
+This project is private and proprietary.
