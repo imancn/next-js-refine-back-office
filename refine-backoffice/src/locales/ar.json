@@ -1,0 +1,156 @@
+{
+  "common": {
+    "actions": "الإجراءات",
+    "create": "إنشاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "clear": "مسح",
+    "loading": "جاري التحميل...",
+    "noData": "لا توجد بيانات متاحة",
+    "error": "حدث خطأ",
+    "success": "نجح",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا",
+    "close": "إغلاق",
+    "view": "عرض",
+    "details": "التفاصيل",
+    "history": "التاريخ",
+    "dashboard": "لوحة التحكم",
+    "settings": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "dark": "داكن",
+    "light": "فاتح"
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "users": "المستخدمون",
+    "products": "المنتجات",
+    "orders": "الطلبات",
+    "reports": "التقارير",
+    "analytics": "التحليلات"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "مرحباً بك في المكتب الخلفي",
+    "stats": {
+      "totalUsers": "إجمالي المستخدمين",
+      "totalProducts": "إجمالي المنتجات",
+      "totalOrders": "إجمالي الطلبات",
+      "totalRevenue": "إجمالي الإيرادات"
+    },
+    "recentActivity": "النشاط الأخير",
+    "quickActions": "الإجراءات السريعة"
+  },
+  "users": {
+    "title": "المستخدمون",
+    "createTitle": "إنشاء مستخدم",
+    "editTitle": "تعديل المستخدم",
+    "showTitle": "تفاصيل المستخدم",
+    "fields": {
+      "email": "البريد الإلكتروني",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "role": "الدور",
+      "avatar": "الصورة الشخصية",
+      "isActive": "الحالة النشطة",
+      "createdAt": "تاريخ الإنشاء",
+      "updatedAt": "تاريخ التحديث"
+    },
+    "roles": {
+      "admin": "مدير",
+      "user": "مستخدم",
+      "manager": "مشرف"
+    }
+  },
+  "products": {
+    "title": "المنتجات",
+    "createTitle": "إنشاء منتج",
+    "editTitle": "تعديل المنتج",
+    "showTitle": "تفاصيل المنتج",
+    "fields": {
+      "name": "اسم المنتج",
+      "description": "الوصف",
+      "price": "السعر",
+      "category": "الفئة",
+      "stock": "الكمية المتوفرة",
+      "sku": "رمز المنتج",
+      "image": "صورة المنتج"
+    }
+  },
+  "orders": {
+    "title": "الطلبات",
+    "createTitle": "إنشاء طلب",
+    "editTitle": "تعديل الطلب",
+    "showTitle": "تفاصيل الطلب",
+    "fields": {
+      "orderNumber": "رقم الطلب",
+      "customerId": "معرف العميل",
+      "customerName": "اسم العميل",
+      "total": "المبلغ الإجمالي",
+      "status": "حالة الطلب"
+    },
+    "statuses": {
+      "pending": "في الانتظار",
+      "processing": "قيد المعالجة",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "ملغي"
+    }
+  },
+  "forms": {
+    "validation": {
+      "required": "هذا الحقل مطلوب",
+      "email": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+      "minLength": "الحد الأدنى للطول هو {min} أحرف",
+      "maxLength": "الحد الأقصى للطول هو {max} أحرف",
+      "min": "الحد الأدنى للقيمة هو {min}",
+      "max": "الحد الأقصى للقيمة هو {max}"
+    }
+  },
+  "tables": {
+    "pagination": {
+      "showing": "عرض {from} إلى {to} من {total} نتيجة",
+      "page": "الصفحة {page} من {totalPages}"
+    },
+    "filters": {
+      "apply": "تطبيق التصفية",
+      "clear": "مسح الكل"
+    }
+  },
+  "history": {
+    "title": "تاريخ التغييرات",
+    "noChanges": "لا توجد تغييرات مسجلة",
+    "changes": "التغييرات",
+    "previousValue": "القيمة السابقة",
+    "newValue": "القيمة الجديدة",
+    "changedBy": "تم التغيير بواسطة",
+    "changedAt": "تاريخ التغيير",
+    "action": "الإجراء"
+  },
+  "charts": {
+    "noData": "لا توجد بيانات متاحة للرسم البياني",
+    "loading": "جاري تحميل بيانات الرسم البياني..."
+  },
+  "notifications": {
+    "userCreated": "تم إنشاء المستخدم بنجاح",
+    "userUpdated": "تم تحديث المستخدم بنجاح",
+    "userDeleted": "تم حذف المستخدم بنجاح",
+    "productCreated": "تم إنشاء المنتج بنجاح",
+    "productUpdated": "تم تحديث المنتج بنجاح",
+    "productDeleted": "تم حذف المنتج بنجاح",
+    "orderCreated": "تم إنشاء الطلب بنجاح",
+    "orderUpdated": "تم تحديث الطلب بنجاح",
+    "orderDeleted": "تم حذف الطلب بنجاح"
+  }
+}
