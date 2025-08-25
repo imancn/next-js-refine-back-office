@@ -15,18 +15,32 @@ import {
   Search,
   Menu,
   X,
-  ChevronDown
+  ChevronDown,
+  Database
 } from 'lucide-react';
 
 interface BackOfficeLayoutProps {
   children: React.ReactNode;
 }
 
-const navigation = [
+interface NavigationItem {
+  name: string;
+  href?: string;
+  icon: any;
+  children?: NavigationItem[];
+}
+
+const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Users', href: '/users', icon: Users },
-  { name: 'Products', href: '/products', icon: Package },
-  { name: 'Orders', href: '/orders', icon: ShoppingCart },
+  { 
+    name: 'CRUD', 
+    icon: Database,
+    children: [
+      { name: 'Users', href: '/users', icon: Users },
+      { name: 'Products', href: '/products', icon: Package },
+      { name: 'Orders', href: '/orders', icon: ShoppingCart },
+    ]
+  },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   { name: 'Reports', href: '/reports', icon: FileText },
   { name: 'Settings', href: '/settings', icon: Settings },
@@ -34,7 +48,81 @@ const navigation = [
 
 export function BackOfficeLayout({ children }: BackOfficeLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const pathname = usePathname();
+
+  const toggleExpanded = (itemName: string) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(itemName)) {
+      newExpanded.delete(itemName);
+    } else {
+      newExpanded.add(itemName);
+    }
+    setExpandedItems(newExpanded);
+  };
+
+  const renderNavigationItem = (item: NavigationItem, isMobile: boolean = false) => {
+    const isActive = item.href ? pathname === item.href : false;
+    const hasChildren = item.children && item.children.length > 0;
+    const isExpanded = expandedItems.has(item.name);
+
+    if (hasChildren) {
+      return (
+        <div key={item.name}>
+          <button
+            onClick={() => toggleExpanded(item.name)}
+            className={`group flex w-full items-center justify-between px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900`}
+          >
+            <div className="flex items-center">
+              <item.icon className="mr-3 h-5 w-5" />
+              {item.name}
+            </div>
+            <ChevronDown 
+              className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
+            />
+          </button>
+          {isExpanded && (
+            <div className="ml-4 space-y-1">
+              {item.children!.map((child) => {
+                const isChildActive = pathname === child.href;
+                return (
+                  <Link
+                    key={child.name}
+                    href={child.href!}
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                      isChildActive
+                        ? 'bg-blue-100 text-blue-900'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                    onClick={() => isMobile && setSidebarOpen(false)}
+                  >
+                    <child.icon className="mr-3 h-5 w-5" />
+                    {child.name}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        key={item.name}
+        href={item.href!}
+        className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+          isActive
+            ? 'bg-blue-100 text-blue-900'
+            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        }`}
+        onClick={() => isMobile && setSidebarOpen(false)}
+      >
+        <item.icon className="mr-3 h-5 w-5" />
+        {item.name}
+      </Link>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,24 +140,7 @@ export function BackOfficeLayout({ children }: BackOfficeLayoutProps) {
             </button>
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    isActive
-                      ? 'bg-blue-100 text-blue-900'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
-                </Link>
-              );
-            })}
+            {navigation.map((item) => renderNavigationItem(item, true))}
           </nav>
         </div>
       </div>
@@ -81,23 +152,7 @@ export function BackOfficeLayout({ children }: BackOfficeLayoutProps) {
             <h1 className="text-xl font-bold text-gray-900">Back Office</h1>
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    isActive
-                      ? 'bg-blue-100 text-blue-900'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
-                </Link>
-              );
-            })}
+            {navigation.map((item) => renderNavigationItem(item))}
           </nav>
         </div>
       </div>
