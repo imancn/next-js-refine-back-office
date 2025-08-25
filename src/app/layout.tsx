@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { I18nProvider } from "./i18n-mock";
 import { BackOfficeLayout } from "./components/BackOfficeLayout";
+import { SettingsProvider } from "./contexts/SettingsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,9 +31,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <I18nProvider>
-          <BackOfficeLayout>
-            {children}
-          </BackOfficeLayout>
+          <SettingsProvider>
+            <BackOfficeLayout>
+              {children}
+            </BackOfficeLayout>
+          </SettingsProvider>
         </I18nProvider>
       </body>
     </html>
