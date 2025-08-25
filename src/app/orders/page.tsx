@@ -1,23 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
 import { 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreHorizontal, 
-  Edit, 
-  Trash2, 
-  Eye,
-  Download,
-  Upload,
-  ShoppingCart,
   Clock,
   CheckCircle,
   Truck,
-  XCircle
+  XCircle,
+  Package
 } from 'lucide-react';
+import { CrudPage, CrudConfig } from '../components/CrudPage';
+import { FormWrapper, FormField, InputField, SelectField, TextareaField, CheckboxField } from '../components/CrudForms';
 
 interface Order {
   id: string;
@@ -51,402 +43,350 @@ const statusConfig = {
   cancelled: { text: 'Cancelled', color: 'bg-red-100 text-red-800', icon: XCircle },
 };
 
-export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>(mockOrders);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [dateRange, setDateRange] = useState({ start: '', end: '' });
-  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [ordersPerPage] = useState(10);
-
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    const matchesDate = (!dateRange.start || new Date(order.createdAt) >= new Date(dateRange.start)) &&
-                       (!dateRange.end || new Date(order.createdAt) <= new Date(dateRange.end));
-    
-    return matchesSearch && matchesStatus && matchesDate;
+// Create Order Form Component
+function CreateOrderForm({ onSubmit, onCancel }: { onSubmit: (data: Partial<Order>) => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState({
+    orderNumber: '',
+    customerId: '',
+    customerName: '',
+    customerEmail: '',
+    total: '',
+    status: 'pending' as Order['status'],
+    items: '',
   });
 
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
-
-  const handleDeleteOrder = (orderId: string) => {
-    if (confirm('Are you sure you want to delete this order?')) {
-      setOrders(orders.filter(order => order.id !== orderId));
-    }
-  };
-
-  const handleBulkDelete = () => {
-    if (selectedOrders.length === 0) return;
-    if (confirm(`Are you sure you want to delete ${selectedOrders.length} orders?`)) {
-      setOrders(orders.filter(order => !selectedOrders.includes(order.id)));
-      setSelectedOrders([]);
-    }
-  };
-
-  const handleSelectAll = () => {
-    if (selectedOrders.length === currentOrders.length) {
-      setSelectedOrders([]);
-    } else {
-      setSelectedOrders(currentOrders.map(order => order.id));
-    }
-  };
-
-  const handleSelectOrder = (orderId: string) => {
-    setSelectedOrders(prev => 
-      prev.includes(orderId) 
-        ? prev.filter(id => id !== orderId)
-        : [...prev, orderId]
-    );
-  };
-
-  const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
-    setOrders(orders.map(order => 
-      order.id === orderId 
-        ? { ...order, status: newStatus, updatedAt: new Date().toISOString() }
-        : order
-    ));
-  };
-
-  const getTotalRevenue = () => {
-    return orders.reduce((sum, order) => sum + order.total, 0);
-  };
-
-  const getOrdersByStatus = () => {
-    const statusCounts = { pending: 0, processing: 0, shipped: 0, delivered: 0, cancelled: 0 };
-    orders.forEach(order => {
-      statusCounts[order.status]++;
+  const handleSubmit = () => {
+    onSubmit({
+      ...formData,
+      total: Number(formData.total),
+      items: Number(formData.items),
     });
-    return statusCounts;
   };
 
   return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-          <p className="text-gray-600">Manage customer orders and fulfillment</p>
-        </div>
-        <Link
-          href="/orders/new"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+    <FormWrapper title="Create New Order" onSubmit={handleSubmit} onCancel={onCancel}>
+      <FormField label="Order Number" required>
+        <InputField
+          value={formData.orderNumber}
+          onChange={(value) => setFormData(prev => ({ ...prev, orderNumber: value }))}
+          placeholder="ORD-001"
+        />
+      </FormField>
+      
+      <FormField label="Customer ID" required>
+        <InputField
+          value={formData.customerId}
+          onChange={(value) => setFormData(prev => ({ ...prev, customerId: value }))}
+          placeholder="CUST-001"
+        />
+      </FormField>
+      
+      <FormField label="Customer Name" required>
+        <InputField
+          value={formData.customerName}
+          onChange={(value) => setFormData(prev => ({ ...prev, customerName: value }))}
+          placeholder="John Smith"
+        />
+      </FormField>
+      
+      <FormField label="Customer Email" required>
+        <InputField
+          type="email"
+          value={formData.customerEmail}
+          onChange={(value) => setFormData(prev => ({ ...prev, customerEmail: value }))}
+          placeholder="john.smith@example.com"
+        />
+      </FormField>
+      
+      <FormField label="Total Amount" required>
+        <InputField
+          type="number"
+          value={formData.total}
+          onChange={(value) => setFormData(prev => ({ ...prev, total: value }))}
+          placeholder="1299"
+        />
+      </FormField>
+      
+      <FormField label="Status" required>
+        <SelectField
+          value={formData.status}
+          onChange={(value) => setFormData(prev => ({ ...prev, status: value as Order['status'] }))}
+          options={[
+            { value: 'pending', label: 'Pending' },
+            { value: 'processing', label: 'Processing' },
+            { value: 'shipped', label: 'Shipped' },
+            { value: 'delivered', label: 'Delivered' },
+            { value: 'cancelled', label: 'Cancelled' },
+          ]}
+        />
+      </FormField>
+      
+      <FormField label="Number of Items" required>
+        <InputField
+          type="number"
+          value={formData.items}
+          onChange={(value) => setFormData(prev => ({ ...prev, items: value }))}
+          placeholder="2"
+        />
+      </FormField>
+    </FormWrapper>
+  );
+}
+
+// Edit Order Form Component
+function EditOrderForm({ data, onSubmit, onCancel }: { data: Order; onSubmit: (data: Partial<Order>) => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState({
+    orderNumber: data.orderNumber,
+    customerId: data.customerId,
+    customerName: data.customerName,
+    customerEmail: data.customerEmail,
+    total: data.total.toString(),
+    status: data.status,
+    items: data.items.toString(),
+  });
+
+  const handleSubmit = () => {
+    onSubmit({
+      ...formData,
+      total: Number(formData.total),
+      items: Number(formData.items),
+    });
+  };
+
+  return (
+    <FormWrapper title="Edit Order" onSubmit={handleSubmit} onCancel={onCancel}>
+      <FormField label="Order Number" required>
+        <InputField
+          value={formData.orderNumber}
+          onChange={(value) => setFormData(prev => ({ ...prev, orderNumber: value }))}
+          placeholder="ORD-001"
+        />
+      </FormField>
+      
+      <FormField label="Customer ID" required>
+        <InputField
+          value={formData.customerId}
+          onChange={(value) => setFormData(prev => ({ ...prev, customerId: value }))}
+          placeholder="CUST-001"
+        />
+      </FormField>
+      
+      <FormField label="Customer Name" required>
+        <InputField
+          value={formData.customerName}
+          onChange={(value) => setFormData(prev => ({ ...prev, customerName: value }))}
+          placeholder="John Smith"
+        />
+      </FormField>
+      
+      <FormField label="Customer Email" required>
+        <InputField
+          type="email"
+          value={formData.customerEmail}
+          onChange={(value) => setFormData(prev => ({ ...prev, customerEmail: value }))}
+          placeholder="john.smith@example.com"
+        />
+      </FormField>
+      
+      <FormField label="Total Amount" required>
+        <InputField
+          type="number"
+          value={formData.total}
+          onChange={(value) => setFormData(prev => ({ ...prev, total: value }))}
+          placeholder="1299"
+        />
+      </FormField>
+      
+      <FormField label="Status" required>
+        <SelectField
+          value={formData.status}
+          onChange={(value) => setFormData(prev => ({ ...prev, status: value as Order['status'] }))}
+          options={[
+            { value: 'pending', label: 'Pending' },
+            { value: 'processing', label: 'Processing' },
+            { value: 'shipped', label: 'Shipped' },
+            { value: 'delivered', label: 'Delivered' },
+            { value: 'cancelled', label: 'Cancelled' },
+          ]}
+        />
+      </FormField>
+      
+      <FormField label="Number of Items" required>
+        <InputField
+          type="number"
+          value={formData.items}
+          onChange={(value) => setFormData(prev => ({ ...prev, items: value }))}
+          placeholder="2"
+        />
+      </FormField>
+    </FormWrapper>
+  );
+}
+
+// View Order Component
+function ViewOrder({ data, onClose }: { data: Order; onClose: () => void }) {
+  const status = statusConfig[data.status];
+  
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium text-gray-900">Order Details</h3>
+        <button
+          onClick={onClose}
+          className="text-gray-400 hover:text-gray-600"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Create Order
-        </Link>
+          <XCircle className="w-5 h-5" />
+        </button>
       </div>
-
-      {/* Order statistics */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <ShoppingCart className="h-6 w-6 text-gray-400" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Total Orders</dt>
-                  <dd className="text-2xl font-semibold text-gray-900">{orders.length}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckCircle className="h-6 w-6 text-green-400" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Delivered</dt>
-                  <dd className="text-2xl font-semibold text-gray-900">{getOrdersByStatus().delivered}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <Clock className="h-6 w-6 text-yellow-400" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Pending</dt>
-                  <dd className="text-2xl font-semibold text-gray-900">{getOrdersByStatus().pending}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckCircle className="h-6 w-6 text-blue-400" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
-                  <dd className="text-2xl font-semibold text-gray-900">${getTotalRevenue().toLocaleString()}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters and search */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+      
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
-              Search
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                id="search"
-                placeholder="Search orders..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-3 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+            <dt className="text-sm font-medium text-gray-500">Order Number</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.orderNumber}</dd>
           </div>
-          
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              id="status"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="processing">Processing</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
-          
-          <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              id="startDate"
-              value={dateRange.start}
-              onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
-              End Date
-            </label>
-            <input
-              type="date"
-              id="endDate"
-              value={dateRange.end}
-              onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-        </div>
-        
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex space-x-2">
-            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </button>
-            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <Upload className="h-4 w-4 mr-2" />
-              Import
-            </button>
-          </div>
-          
-          <div className="text-sm text-gray-500">
-            {filteredOrders.length} orders found
-          </div>
-        </div>
-      </div>
-
-      {/* Orders table */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-4">
-              <input
-                type="checkbox"
-                checked={selectedOrders.length === currentOrders.length && currentOrders.length > 0}
-                onChange={handleSelectAll}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <span className="text-sm text-gray-700">
-                {selectedOrders.length} of {filteredOrders.length} selected
+            <dt className="text-sm font-medium text-gray-500">Status</dt>
+            <dd className="mt-1">
+              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
+                <status.icon className="w-3 h-3 mr-1" />
+                {status.text}
               </span>
-            </div>
-            
-            {selectedOrders.length > 0 && (
-              <button
-                onClick={handleBulkDelete}
-                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Selected
-              </button>
-            )}
+            </dd>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Order
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Customer
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Items
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {currentOrders.map((order) => {
-                  const status = statusConfig[order.status];
-                  const StatusIcon = status.icon;
-                  
-                  return (
-                    <tr key={order.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={selectedOrders.includes(order.id)}
-                            onChange={() => handleSelectOrder(order.id)}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
-                          />
-                          <div>
-                            <div className="text-sm font-medium text-gray-900 font-mono">{order.orderNumber}</div>
-                            <div className="text-sm text-gray-500">ID: {order.id}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{order.customerName}</div>
-                          <div className="text-sm text-gray-500">{order.customerEmail}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
-                        ${order.total.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {order.items} item{order.items !== 1 ? 's' : ''}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <StatusIcon className="h-4 w-4 mr-2" />
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>
-                            {status.text}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Link
-                            href={`/orders/${order.id}`}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                          <Link
-                            href={`/orders/${order.id}/edit`}
-                            className="text-indigo-600 hover:text-indigo-900"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                          <button
-                            onClick={() => handleDeleteOrder(order.id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Customer Name</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.customerName}</dd>
           </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-gray-700">
-                Showing {indexOfFirstOrder + 1} to {Math.min(indexOfLastOrder, filteredOrders.length)} of {filteredOrders.length} results
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Customer Email</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.customerEmail}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Total Amount</dt>
+            <dd className="mt-1 text-sm text-gray-900">${data.total}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Items</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.items}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Created</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.createdAt}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Updated</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.updatedAt}</dd>
+          </div>
         </div>
+      </div>
+      
+      <div className="flex justify-end pt-4 border-t">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Close
+        </button>
       </div>
     </div>
+  );
+}
+
+export default function OrdersPage() {
+  const [orders, setOrders] = useState<Order[]>(mockOrders);
+
+  const crudConfig: CrudConfig<Order> = {
+    apiPrefix: '/api/orders',
+    title: 'Orders',
+    columns: [
+      {
+        key: 'orderNumber',
+        header: 'Order Number',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'customerName',
+        header: 'Customer',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'customerEmail',
+        header: 'Email',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'total',
+        header: 'Total',
+        sortable: true,
+        align: 'right',
+        render: (value) => `$${value}`,
+      },
+      {
+        key: 'status',
+        header: 'Status',
+        sortable: true,
+        render: (value) => {
+          const status = statusConfig[value as keyof typeof statusConfig];
+          return (
+            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
+              <status.icon className="w-3 h-3 mr-1" />
+              {status.text}
+            </span>
+          );
+        },
+      },
+      {
+        key: 'items',
+        header: 'Items',
+        sortable: true,
+        align: 'center',
+      },
+      {
+        key: 'createdAt',
+        header: 'Created',
+        sortable: true,
+        render: (value) => new Date(value).toLocaleDateString(),
+      },
+    ],
+    filters: [
+      {
+        key: 'status',
+        label: 'Status',
+        type: 'select',
+        options: [
+          { value: 'pending', label: 'Pending' },
+          { value: 'processing', label: 'Processing' },
+          { value: 'shipped', label: 'Shipped' },
+          { value: 'delivered', label: 'Delivered' },
+          { value: 'cancelled', label: 'Cancelled' },
+        ],
+      },
+    ],
+    createForm: CreateOrderForm,
+    editForm: EditOrderForm,
+    viewForm: ViewOrder,
+    itemsPerPage: 10,
+    enableSearch: true,
+    enableFilters: true,
+    enablePagination: true,
+    enableBulkActions: true,
+    enableCreate: true,
+    enableEdit: true,
+    enableDelete: true,
+    enableView: true,
+    enableExport: true,
+    enableImport: true,
+  };
+
+  return (
+    <CrudPage
+      config={crudConfig}
+      data={orders}
+      onDataChange={setOrders}
+    />
   );
 }

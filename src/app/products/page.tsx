@@ -1,19 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreHorizontal, 
-  Edit, 
-  Trash2, 
-  Eye,
-  Download,
-  Upload,
-  Package
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { Package } from 'lucide-react';
+import { CrudPage, CrudConfig } from '../components/CrudPage';
+import { FormWrapper, FormField, InputField, SelectField, TextareaField, CheckboxField } from '../components/CrudForms';
 
 interface Product {
   id: string;
@@ -42,350 +32,376 @@ const mockProducts: Product[] = [
 
 const categories = ['Electronics', 'Clothing', 'Home & Garden', 'Sports', 'Books', 'Automotive'];
 
-export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(10);
-
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.sku.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
-    const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'active' && product.isActive) ||
-                         (statusFilter === 'inactive' && !product.isActive);
-    const matchesPrice = (!priceRange.min || product.price >= Number(priceRange.min)) &&
-                        (!priceRange.max || product.price <= Number(priceRange.max));
-    
-    return matchesSearch && matchesCategory && matchesStatus && matchesPrice;
+// Create Product Form Component
+function CreateProductForm({ onSubmit, onCancel }: { onSubmit: (data: Partial<Product>) => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    category: '',
+    stock: '',
+    sku: '',
+    image: '',
+    isActive: true,
   });
 
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
-  const handleDeleteProduct = (productId: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      setProducts(products.filter(product => product.id !== productId));
-    }
-  };
-
-  const handleBulkDelete = () => {
-    if (selectedProducts.length === 0) return;
-    if (confirm(`Are you sure you want to delete ${selectedProducts.length} products?`)) {
-      setProducts(products.filter(product => !selectedProducts.includes(product.id)));
-      setSelectedProducts([]);
-    }
-  };
-
-  const handleSelectAll = () => {
-    if (selectedProducts.length === currentProducts.length) {
-      setSelectedProducts([]);
-    } else {
-      setSelectedProducts(currentProducts.map(product => product.id));
-    }
-  };
-
-  const handleSelectProduct = (productId: string) => {
-    setSelectedProducts(prev => 
-      prev.includes(productId) 
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
-  };
-
-  const getStockStatus = (stock: number) => {
-    if (stock === 0) return { text: 'Out of Stock', color: 'bg-red-100 text-red-800' };
-    if (stock < 10) return { text: 'Low Stock', color: 'bg-yellow-100 text-yellow-800' };
-    return { text: 'In Stock', color: 'bg-green-100 text-green-800' };
+  const handleSubmit = () => {
+    onSubmit({
+      ...formData,
+      price: Number(formData.price),
+      stock: Number(formData.stock),
+    });
   };
 
   return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-600">Manage product catalog and inventory</p>
-        </div>
-        <Link
-          href="/products/new"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+    <FormWrapper title="Create New Product" onSubmit={handleSubmit} onCancel={onCancel}>
+      <FormField label="Product Name" required>
+        <InputField
+          value={formData.name}
+          onChange={(value) => setFormData(prev => ({ ...prev, name: value }))}
+          placeholder="Laptop Pro"
+        />
+      </FormField>
+      
+      <FormField label="Description" required>
+        <TextareaField
+          value={formData.description}
+          onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
+          placeholder="High-performance laptop for professionals"
+          rows={3}
+        />
+      </FormField>
+      
+      <FormField label="Price" required>
+        <InputField
+          type="number"
+          value={formData.price}
+          onChange={(value) => setFormData(prev => ({ ...prev, price: value }))}
+          placeholder="1299"
+        />
+      </FormField>
+      
+      <FormField label="Category" required>
+        <SelectField
+          value={formData.category}
+          onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+          options={categories.map(cat => ({ value: cat, label: cat }))}
+          placeholder="Select category"
+        />
+      </FormField>
+      
+      <FormField label="Stock" required>
+        <InputField
+          type="number"
+          value={formData.stock}
+          onChange={(value) => setFormData(prev => ({ ...prev, stock: value }))}
+          placeholder="25"
+        />
+      </FormField>
+      
+      <FormField label="SKU" required>
+        <InputField
+          value={formData.sku}
+          onChange={(value) => setFormData(prev => ({ ...prev, sku: value }))}
+          placeholder="LAP-001"
+        />
+      </FormField>
+      
+      <FormField label="Image URL">
+        <InputField
+          type="url"
+          value={formData.image}
+          onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+          placeholder="https://example.com/image.jpg"
+        />
+      </FormField>
+      
+      <FormField label="Active Status">
+        <CheckboxField
+          checked={formData.isActive}
+          onChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+          label="Product is active and available for purchase"
+        />
+      </FormField>
+    </FormWrapper>
+  );
+}
+
+// Edit Product Form Component
+function EditProductForm({ data, onSubmit, onCancel }: { data: Product; onSubmit: (data: Partial<Product>) => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState({
+    name: data.name,
+    description: data.description,
+    price: data.price.toString(),
+    category: data.category,
+    stock: data.stock.toString(),
+    sku: data.sku,
+    image: data.image,
+    isActive: data.isActive,
+  });
+
+  const handleSubmit = () => {
+    onSubmit({
+      ...formData,
+      price: Number(formData.price),
+      stock: Number(formData.stock),
+    });
+  };
+
+  return (
+    <FormWrapper title="Edit Product" onSubmit={handleSubmit} onCancel={onCancel}>
+      <FormField label="Product Name" required>
+        <InputField
+          value={formData.name}
+          onChange={(value) => setFormData(prev => ({ ...prev, name: value }))}
+          placeholder="Laptop Pro"
+        />
+      </FormField>
+      
+      <FormField label="Description" required>
+        <TextareaField
+          value={formData.description}
+          onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
+          placeholder="High-performance laptop for professionals"
+          rows={3}
+        />
+      </FormField>
+      
+      <FormField label="Price" required>
+        <InputField
+          type="number"
+          value={formData.price}
+          onChange={(value) => setFormData(prev => ({ ...prev, price: value }))}
+          placeholder="1299"
+        />
+      </FormField>
+      
+      <FormField label="Category" required>
+        <SelectField
+          value={formData.category}
+          onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+          options={categories.map(cat => ({ value: cat, label: cat }))}
+          placeholder="Select category"
+        />
+      </FormField>
+      
+      <FormField label="Stock" required>
+        <InputField
+          type="number"
+          value={formData.stock}
+          onChange={(value) => setFormData(prev => ({ ...prev, stock: value }))}
+          placeholder="25"
+        />
+      </FormField>
+      
+      <FormField label="SKU" required>
+        <InputField
+          value={formData.sku}
+          onChange={(value) => setFormData(prev => ({ ...prev, sku: value }))}
+          placeholder="LAP-001"
+        />
+      </FormField>
+      
+      <FormField label="Image URL">
+        <InputField
+          type="url"
+          value={formData.image}
+          onChange={(value) => setFormData(prev => ({ ...prev, image: value }))}
+          placeholder="https://example.com/image.jpg"
+        />
+      </FormField>
+      
+      <FormField label="Active Status">
+        <CheckboxField
+          checked={formData.isActive}
+          onChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+          label="Product is active and available for purchase"
+        />
+      </FormField>
+    </FormWrapper>
+  );
+}
+
+// View Product Component
+function ViewProduct({ data, onClose }: { data: Product; onClose: () => void }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium text-gray-900">Product Details</h3>
+        <button
+          onClick={onClose}
+          className="text-gray-400 hover:text-gray-600"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Product
-        </Link>
+          <Package className="w-5 h-5" />
+        </button>
       </div>
-
-      {/* Filters and search */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
+      
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
-              Search
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                id="search"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-3 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+            <dt className="text-sm font-medium text-gray-500">Product Name</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.name}</dd>
           </div>
-          
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-              Category
-            </label>
-            <select
-              id="category"
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
+            <dt className="text-sm font-medium text-gray-500">SKU</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.sku}</dd>
           </div>
-          
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              id="status"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+            <dt className="text-sm font-medium text-gray-500">Category</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.category}</dd>
           </div>
-          
           <div>
-            <label htmlFor="minPrice" className="block text-sm font-medium text-gray-700 mb-1">
-              Min Price
-            </label>
-            <input
-              type="number"
-              id="minPrice"
-              placeholder="0"
-              value={priceRange.min}
-              onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+            <dt className="text-sm font-medium text-gray-500">Price</dt>
+            <dd className="mt-1 text-sm text-gray-900">${data.price}</dd>
           </div>
-          
           <div>
-            <label htmlFor="maxPrice" className="block text-sm font-medium text-gray-700 mb-1">
-              Max Price
-            </label>
-            <input
-              type="number"
-              id="maxPrice"
-              placeholder="1000"
-              value={priceRange.max}
-              onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+            <dt className="text-sm font-medium text-gray-500">Stock</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.stock}</dd>
           </div>
-        </div>
-        
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex space-x-2">
-            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </button>
-            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <Upload className="h-4 w-4 mr-2" />
-              Import
-            </button>
-          </div>
-          
-          <div className="text-sm text-gray-500">
-            {filteredProducts.length} products found
-          </div>
-        </div>
-      </div>
-
-      {/* Products table */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-4">
-              <input
-                type="checkbox"
-                checked={selectedProducts.length === currentProducts.length && currentProducts.length > 0}
-                onChange={handleSelectAll}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <span className="text-sm text-gray-700">
-                {selectedProducts.length} of {filteredProducts.length} selected
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Status</dt>
+            <dd className="mt-1">
+              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                data.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                {data.isActive ? 'Active' : 'Inactive'}
               </span>
-            </div>
-            
-            {selectedProducts.length > 0 && (
-              <button
-                onClick={handleBulkDelete}
-                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Selected
-              </button>
-            )}
+            </dd>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Product
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Stock
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    SKU
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {currentProducts.map((product) => {
-                  const stockStatus = getStockStatus(product.stock);
-                  return (
-                    <tr key={product.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={selectedProducts.includes(product.id)}
-                            onChange={() => handleSelectProduct(product.id)}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
-                          />
-                          <div className="flex-shrink-0 h-10 w-10">
-                            <img
-                              className="h-10 w-10 rounded-lg object-cover"
-                              src={product.image}
-                              alt={product.name}
-                              onError={(e) => {
-                                e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0YzRjRGNiIvPgo8cGF0aCBkPSJNMTIgMTZDMTAuODk1NCAxNiAxMCAxNi44OTU0IDEwIDE4VjIyQzEwIDIzLjEwNDYgMTAuODk1NCAyNCAxMiAyNEgyOEMyOS4xMDQ2IDI0IDMwIDIzLjEwNDYgMzAgMjJWMThDMzAgMTYuODk1NCAyOS4xMDQ2IDE2IDI4IDE2SDEyWiIgZmlsbD0iI0QxRDVETyIvPgo8L3N2Zz4K';
-                              }}
-                            />
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                            <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {product.category}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ${product.price.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${stockStatus.color}`}>
-                          {stockStatus.text}
-                        </span>
-                        <div className="text-sm text-gray-500 mt-1">{product.stock} units</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {product.isActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                        {product.sku}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Link
-                            href={`/products/${product.id}`}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                          <Link
-                            href={`/products/${product.id}/edit`}
-                            className="text-indigo-600 hover:text-indigo-900"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                          <button
-                            onClick={() => handleDeleteProduct(product.id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="col-span-2">
+            <dt className="text-sm font-medium text-gray-500">Description</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.description}</dd>
           </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-gray-700">
-                Showing {indexOfFirstProduct + 1} to {Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} results
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
+          {data.image && (
+            <div className="col-span-2">
+              <dt className="text-sm font-medium text-gray-500">Image</dt>
+              <dd className="mt-1">
+                <img 
+                  src={data.image} 
+                  alt={data.name} 
+                  className="w-20 h-20 rounded object-cover"
+                />
+              </dd>
             </div>
           )}
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Created</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.createdAt}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Updated</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.updatedAt}</dd>
+          </div>
         </div>
       </div>
+      
+      <div className="flex justify-end pt-4 border-t">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Close
+        </button>
+      </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>(mockProducts);
+
+  const crudConfig: CrudConfig<Product> = {
+    apiPrefix: '/api/products',
+    title: 'Products',
+    columns: [
+      {
+        key: 'name',
+        header: 'Product Name',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'sku',
+        header: 'SKU',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'category',
+        header: 'Category',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'price',
+        header: 'Price',
+        sortable: true,
+        align: 'right',
+        render: (value) => `$${value}`,
+      },
+      {
+        key: 'stock',
+        header: 'Stock',
+        sortable: true,
+        align: 'center',
+      },
+      {
+        key: 'isActive',
+        header: 'Status',
+        sortable: true,
+        render: (value) => (
+          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+            value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`}>
+            {value ? 'Active' : 'Inactive'}
+          </span>
+        ),
+      },
+      {
+        key: 'createdAt',
+        header: 'Created',
+        sortable: true,
+        render: (value) => new Date(value).toLocaleDateString(),
+      },
+    ],
+    filters: [
+      {
+        key: 'category',
+        label: 'Category',
+        type: 'select',
+        options: categories.map(cat => ({ value: cat, label: cat })),
+      },
+      {
+        key: 'isActive',
+        label: 'Status',
+        type: 'select',
+        options: [
+          { value: 'true', label: 'Active' },
+          { value: 'false', label: 'Inactive' },
+        ],
+      },
+    ],
+    createForm: CreateProductForm,
+    editForm: EditProductForm,
+    viewForm: ViewProduct,
+    itemsPerPage: 10,
+    enableSearch: true,
+    enableFilters: true,
+    enablePagination: true,
+    enableBulkActions: true,
+    enableCreate: true,
+    enableEdit: true,
+    enableDelete: true,
+    enableView: true,
+    enableExport: true,
+    enableImport: true,
+  };
+
+  return (
+    <CrudPage
+      config={crudConfig}
+      data={products}
+      onDataChange={setProducts}
+    />
   );
 }
