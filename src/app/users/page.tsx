@@ -1,18 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreHorizontal, 
-  Edit, 
-  Trash2, 
-  Eye,
-  Download,
-  Upload
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { User } from 'lucide-react';
+import { CrudPage, CrudConfig } from '../components/CrudPage';
+import { FormWrapper, FormField, InputField, SelectField, CheckboxField } from '../components/CrudForms';
 
 interface User {
   id: string;
@@ -36,291 +27,291 @@ const mockUsers: User[] = [
   { id: '8', email: 'fiona.garcia@example.com', firstName: 'Fiona', lastName: 'Garcia', role: 'manager', isActive: true, createdAt: '2024-02-18', updatedAt: '2024-02-18' },
 ];
 
-export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>(mockUsers);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(10);
+const roles = ['admin', 'manager', 'user'];
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.lastName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-    const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'active' && user.isActive) ||
-                         (statusFilter === 'inactive' && !user.isActive);
-    
-    return matchesSearch && matchesRole && matchesStatus;
+// Create User Form Component
+function CreateUserForm({ onSubmit, onCancel }: { onSubmit: (data: Partial<User>) => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    role: 'user',
+    isActive: true,
   });
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-
-  const handleDeleteUser = (userId: string) => {
-    if (confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter(user => user.id !== userId));
-    }
-  };
-
-  const handleBulkDelete = () => {
-    if (selectedUsers.length === 0) return;
-    if (confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
-      setUsers(users.filter(user => !selectedUsers.includes(user.id)));
-      setSelectedUsers([]);
-    }
-  };
-
-  const handleSelectAll = () => {
-    if (selectedUsers.length === currentUsers.length) {
-      setSelectedUsers([]);
-    } else {
-      setSelectedUsers(currentUsers.map(user => user.id));
-    }
-  };
-
-  const handleSelectUser = (userId: string) => {
-    setSelectedUsers(prev => 
-      prev.includes(userId) 
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
-    );
+  const handleSubmit = () => {
+    onSubmit(formData);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Users</h1>
-          <p className="text-gray-600">Manage user accounts and permissions</p>
-        </div>
-        <Link
-          href="/users/new"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+    <FormWrapper title="Create New User" onSubmit={handleSubmit} onCancel={onCancel}>
+      <FormField label="Email" required>
+        <InputField
+          type="email"
+          value={formData.email}
+          onChange={(value) => setFormData(prev => ({ ...prev, email: value }))}
+          placeholder="john.doe@example.com"
+        />
+      </FormField>
+      
+      <FormField label="First Name" required>
+        <InputField
+          value={formData.firstName}
+          onChange={(value) => setFormData(prev => ({ ...prev, firstName: value }))}
+          placeholder="John"
+        />
+      </FormField>
+      
+      <FormField label="Last Name" required>
+        <InputField
+          value={formData.lastName}
+          onChange={(value) => setFormData(prev => ({ ...prev, lastName: value }))}
+          placeholder="Doe"
+        />
+      </FormField>
+      
+      <FormField label="Role" required>
+        <SelectField
+          value={formData.role}
+          onChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+          options={roles.map(role => ({ value: role, label: role.charAt(0).toUpperCase() + role.slice(1) }))}
+          placeholder="Select role"
+        />
+      </FormField>
+      
+      <FormField label="Active Status">
+        <CheckboxField
+          checked={formData.isActive}
+          onChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+          label="User account is active"
+        />
+      </FormField>
+    </FormWrapper>
+  );
+}
+
+// Edit User Form Component
+function EditUserForm({ data, onSubmit, onCancel }: { data: User; onSubmit: (data: Partial<User>) => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState({
+    email: data.email,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    role: data.role,
+    isActive: data.isActive,
+  });
+
+  const handleSubmit = () => {
+    onSubmit(formData);
+  };
+
+  return (
+    <FormWrapper title="Edit User" onSubmit={handleSubmit} onCancel={onCancel}>
+      <FormField label="Email" required>
+        <InputField
+          type="email"
+          value={formData.email}
+          onChange={(value) => setFormData(prev => ({ ...prev, email: value }))}
+          placeholder="john.doe@example.com"
+        />
+      </FormField>
+      
+      <FormField label="First Name" required>
+        <InputField
+          value={formData.firstName}
+          onChange={(value) => setFormData(prev => ({ ...prev, firstName: value }))}
+          placeholder="John"
+        />
+      </FormField>
+      
+      <FormField label="Last Name" required>
+        <InputField
+          value={formData.lastName}
+          onChange={(value) => setFormData(prev => ({ ...prev, lastName: value }))}
+          placeholder="Doe"
+        />
+      </FormField>
+      
+      <FormField label="Role" required>
+        <SelectField
+          value={formData.role}
+          onChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+          options={roles.map(role => ({ value: role, label: role.charAt(0).toUpperCase() + role.slice(1) }))}
+          placeholder="Select role"
+        />
+      </FormField>
+      
+      <FormField label="Active Status">
+        <CheckboxField
+          checked={formData.isActive}
+          onChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+          label="User account is active"
+        />
+      </FormField>
+    </FormWrapper>
+  );
+}
+
+// View User Component
+function ViewUser({ data, onClose }: { data: User; onClose: () => void }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium text-gray-900">User Details</h3>
+        <button
+          onClick={onClose}
+          className="text-gray-400 hover:text-gray-600"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Add User
-        </Link>
+          <User className="w-5 h-5" />
+        </button>
       </div>
-
-      {/* Filters and search */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+      
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
-              Search
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                id="search"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-3 py-2 border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+            <dt className="text-sm font-medium text-gray-500">Email</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.email}</dd>
           </div>
-          
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-              Role
-            </label>
-            <select
-              id="role"
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="manager">Manager</option>
-              <option value="user">User</option>
-            </select>
-          </div>
-          
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              id="status"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-          
-          <div className="flex items-end space-x-2">
-            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </button>
-            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <Upload className="h-4 w-4 mr-2" />
-              Import
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Users table */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-4">
-              <input
-                type="checkbox"
-                checked={selectedUsers.length === currentUsers.length && currentUsers.length > 0}
-                onChange={handleSelectAll}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <span className="text-sm text-gray-700">
-                {selectedUsers.length} of {filteredUsers.length} selected
+            <dt className="text-sm font-medium text-gray-500">Role</dt>
+            <dd className="mt-1">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                {data.role.charAt(0).toUpperCase() + data.role.slice(1)}
               </span>
-            </div>
-            
-            {selectedUsers.length > 0 && (
-              <button
-                onClick={handleBulkDelete}
-                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Selected
-              </button>
-            )}
+            </dd>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Updated
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {currentUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedUsers.includes(user.id)}
-                          onChange={() => handleSelectUser(user.id)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
-                        />
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {user.firstName} {user.lastName}
-                          </div>
-                          <div className="text-sm text-gray-500">{user.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        user.role === 'admin' ? 'bg-red-100 text-red-800' :
-                        user.role === 'manager' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
-                      }`}>
-                        {user.role}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {user.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(user.updatedAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex items-center justify-end space-x-2">
-                        <Link
-                          href={`/users/${user.id}`}
-                          className="text-blue-600 hover:text-blue-900"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                        <Link
-                          href={`/users/${user.id}/edit`}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                        <button
-                          onClick={() => handleDeleteUser(user.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">First Name</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.firstName}</dd>
           </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-gray-700">
-                Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} results
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Last Name</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.lastName}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Status</dt>
+            <dd className="mt-1">
+              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                data.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                {data.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Created</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.createdAt}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Updated</dt>
+            <dd className="mt-1 text-sm text-gray-900">{data.updatedAt}</dd>
+          </div>
         </div>
+      </div>
+      
+      <div className="flex justify-end pt-4 border-t">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Close
+        </button>
       </div>
     </div>
+  );
+}
+
+export default function UsersPage() {
+  const [users, setUsers] = useState<User[]>(mockUsers);
+
+  const crudConfig: CrudConfig<User> = {
+    apiPrefix: '/api/users',
+    title: 'Users',
+    columns: [
+      {
+        key: 'email',
+        header: 'Email',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'firstName',
+        header: 'First Name',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'lastName',
+        header: 'Last Name',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        key: 'role',
+        header: 'Role',
+        sortable: true,
+        render: (value) => (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            {String(value).charAt(0).toUpperCase() + String(value).slice(1)}
+          </span>
+        ),
+      },
+      {
+        key: 'isActive',
+        header: 'Status',
+        sortable: true,
+        render: (value) => (
+          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+            value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`}>
+            {value ? 'Active' : 'Inactive'}
+          </span>
+        ),
+      },
+      {
+        key: 'createdAt',
+        header: 'Created',
+        sortable: true,
+        render: (value) => new Date(value).toLocaleDateString(),
+      },
+    ],
+    filters: [
+      {
+        key: 'role',
+        label: 'Role',
+        type: 'select',
+        options: roles.map(role => ({ value: role, label: role.charAt(0).toUpperCase() + role.slice(1) })),
+      },
+      {
+        key: 'isActive',
+        label: 'Status',
+        type: 'select',
+        options: [
+          { value: 'true', label: 'Active' },
+          { value: 'false', label: 'Inactive' },
+        ],
+      },
+    ],
+    createForm: CreateUserForm,
+    editForm: EditUserForm,
+    viewForm: ViewUser,
+    itemsPerPage: 10,
+    enableSearch: true,
+    enableFilters: true,
+    enablePagination: true,
+    enableBulkActions: true,
+    enableCreate: true,
+    enableEdit: true,
+    enableDelete: true,
+    enableView: true,
+    enableExport: true,
+    enableImport: true,
+  };
+
+  return (
+    <CrudPage
+      config={crudConfig}
+      data={users}
+      onDataChange={setUsers}
+    />
   );
 }
