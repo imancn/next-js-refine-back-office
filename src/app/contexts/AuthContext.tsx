@@ -61,9 +61,9 @@ export interface LoginCredentials {
 }
 
 export interface SignupData {
-  email?: string;
+  email: string;
   phone?: string;
-  password?: string;
+  password: string;
   firstName?: string;
   lastName?: string;
   provider?: 'google' | 'apple';

@@ -23,15 +23,15 @@ const loginSchema = z.object({
 });
 
 const signupSchema = z.object({
-  email: z.string().email().optional(),
+  email: z.string().email(),
   phone: z.string().optional(),
-  password: z.string().min(8).optional(),
+  password: z.string().min(8),
   firstName: z.string().min(2).optional(),
   lastName: z.string().min(2).optional(),
 }).refine((data) => {
-  return (data.email || data.phone) && data.password;
+  return data.email && data.password;
 }, {
-  message: "Please provide either email or phone and password",
+  message: "Please provide email and password",
 });
 
 const otpSchema = z.object({
