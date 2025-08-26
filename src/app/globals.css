@@ -3,6 +3,637 @@
 @tailwind utilities;
 
 /* ==========================================================================
+   Ant Design + Tailwind CSS Integration
+   ========================================================================== */
+
+/* Ensure Ant Design components respect Tailwind's base styles */
+.ant-btn {
+  @apply font-medium;
+}
+
+.ant-input,
+.ant-select-selector,
+.ant-picker {
+  @apply border-border;
+}
+
+.ant-input:focus,
+.ant-select-focused .ant-select-selector,
+.ant-picker-focused {
+  @apply border-primary ring-1;
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.ant-card {
+  @apply border-border;
+}
+
+.ant-table-thead > tr > th {
+  @apply bg-secondary text-secondary-foreground;
+}
+
+.ant-table-tbody > tr:hover > td {
+  @apply bg-accent;
+}
+
+.ant-menu-item-selected {
+  @apply bg-primary text-primary-foreground;
+}
+
+.ant-menu-item:hover {
+  @apply bg-accent text-foreground;
+}
+
+/* Dark mode overrides for Ant Design */
+.dark .ant-card {
+  @apply bg-card border-border;
+}
+
+.dark .ant-input,
+.dark .ant-select-selector,
+.dark .ant-picker {
+  @apply bg-card border-border text-foreground;
+}
+
+.dark .ant-table-thead > tr > th {
+  @apply bg-secondary text-secondary-foreground;
+}
+
+.dark .ant-table-tbody > tr > td {
+  @apply bg-card text-foreground border-border;
+}
+
+.dark .ant-menu {
+  @apply bg-card border-border;
+}
+
+.dark .ant-menu-item {
+  @apply text-foreground;
+}
+
+.dark .ant-menu-item:hover {
+  @apply bg-accent;
+}
+
+.dark .ant-menu-item-selected {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Responsive table improvements */
+.ant-table-responsive {
+  @apply overflow-x-auto;
+}
+
+@media (max-width: 768px) {
+  .ant-table-responsive .ant-table {
+    @apply text-sm;
+  }
+  
+  .ant-table-responsive .ant-table-thead > tr > th,
+  .ant-table-responsive .ant-table-tbody > tr > td {
+    @apply px-2 py-2;
+  }
+}
+
+/* Enhanced form styling */
+.ant-form-item-label > label {
+  @apply text-foreground font-medium;
+}
+
+.ant-form-item-explain-error {
+  @apply text-destructive text-sm;
+}
+
+.ant-form-item-explain-success {
+  @apply text-green-600 text-sm;
+}
+
+/* Modal and drawer improvements */
+.ant-modal-content,
+.ant-drawer-content {
+  @apply bg-card border-border;
+}
+
+.ant-modal-header,
+.ant-drawer-header {
+  @apply border-border;
+}
+
+.ant-modal-footer,
+.ant-drawer-footer {
+  @apply border-border;
+}
+
+/* Button group improvements */
+.ant-btn-group .ant-btn:not(:last-child) {
+  @apply border-r border-border;
+}
+
+/* Select dropdown improvements */
+.ant-select-dropdown {
+  @apply bg-card border-border;
+}
+
+.ant-select-item {
+  @apply text-foreground;
+}
+
+.ant-select-item-option-selected {
+  @apply bg-primary text-primary-foreground;
+}
+
+.ant-select-item-option-active {
+  @apply bg-accent;
+}
+
+/* Date picker improvements */
+.ant-picker-dropdown {
+  @apply bg-card border-border;
+}
+
+.ant-picker-panel-container {
+  @apply bg-card;
+}
+
+.ant-picker-header {
+  @apply border-border;
+}
+
+.ant-picker-content th,
+.ant-picker-content td {
+  @apply text-foreground;
+}
+
+.ant-picker-cell-in-view {
+  @apply text-foreground;
+}
+
+.ant-picker-cell-selected .ant-picker-cell-inner {
+  @apply bg-primary text-primary-foreground;
+}
+
+.ant-picker-cell-today .ant-picker-cell-inner {
+  @apply border-primary;
+}
+
+/* Message and notification improvements */
+.ant-message-notice-content {
+  @apply bg-card border border-border shadow-lg;
+}
+
+.ant-notification-notice {
+  @apply bg-card border border-border shadow-lg;
+}
+
+/* Tooltip improvements */
+.ant-tooltip-inner {
+  @apply bg-card text-foreground border border-border;
+}
+
+/* Popover improvements */
+.ant-popover-inner {
+  @apply bg-card border border-border;
+}
+
+.ant-popover-arrow {
+  @apply border-border;
+}
+
+/* Progress improvements */
+.ant-progress-text {
+  @apply text-foreground;
+}
+
+/* Rate improvements */
+.ant-rate-star {
+  @apply text-muted-foreground;
+}
+
+.ant-rate-star-active {
+  @apply text-yellow-500;
+}
+
+/* Switch improvements */
+.ant-switch-checked {
+  @apply bg-primary;
+}
+
+/* Radio and checkbox improvements */
+.ant-radio-checked .ant-radio-inner {
+  @apply border-primary;
+}
+
+.ant-radio-inner::after {
+  @apply bg-primary;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  @apply bg-primary border-primary;
+}
+
+.ant-checkbox-inner::after {
+  @apply border-white;
+}
+
+/* Slider improvements */
+.ant-slider-track {
+  @apply bg-primary;
+}
+
+.ant-slider-handle {
+  @apply border-primary;
+}
+
+.ant-slider-handle:focus {
+  @apply border-primary ring-1;
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+/* Upload improvements */
+.ant-upload-drag {
+  @apply border-dashed border-border bg-muted;
+}
+
+.ant-upload-drag:hover {
+  @apply border-primary;
+}
+
+.ant-upload-drag.ant-upload-drag-hover {
+  @apply border-primary bg-accent;
+}
+
+/* Pagination improvements */
+.ant-pagination-item {
+  @apply border-border;
+}
+
+.ant-pagination-item:hover {
+  @apply border-primary;
+}
+
+.ant-pagination-item-active {
+  @apply border-primary bg-primary text-primary-foreground;
+}
+
+.ant-pagination-prev,
+.ant-pagination-next {
+  @apply border-border;
+}
+
+.ant-pagination-prev:hover,
+.ant-pagination-next:hover {
+  @apply border-primary;
+}
+
+/* Breadcrumb improvements */
+.ant-breadcrumb-link {
+  @apply text-foreground;
+}
+
+.ant-breadcrumb-link:hover {
+  @apply text-primary;
+}
+
+.ant-breadcrumb-separator {
+  @apply text-muted-foreground;
+}
+
+/* Steps improvements */
+.ant-steps-item-title {
+  @apply text-foreground;
+}
+
+.ant-steps-item-description {
+  @apply text-muted-foreground;
+}
+
+.ant-steps-item-process .ant-steps-item-icon {
+  @apply bg-primary border-primary;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon {
+  @apply bg-green-500 border-green-500;
+}
+
+.ant-steps-item-finish .ant-steps-item-tail::after {
+  @apply bg-green-500;
+}
+
+/* Timeline improvements */
+.ant-timeline-item-head {
+  @apply bg-card border-primary;
+}
+
+.ant-timeline-item-tail {
+  @apply border-border;
+}
+
+/* Collapse improvements */
+.ant-collapse {
+  @apply border border-border;
+}
+
+.ant-collapse-item {
+  @apply border-border;
+}
+
+.ant-collapse-header {
+  @apply text-foreground;
+}
+
+.ant-collapse-content {
+  @apply bg-card;
+}
+
+/* Tabs improvements */
+.ant-tabs-tab {
+  @apply text-foreground;
+}
+
+.ant-tabs-tab:hover {
+  @apply text-primary;
+}
+
+.ant-tabs-tab-active {
+  @apply text-primary;
+}
+
+.ant-tabs-ink-bar {
+  @apply bg-primary;
+}
+
+/* Tree improvements */
+.ant-tree {
+  @apply bg-card;
+}
+
+.ant-tree-node-content-wrapper {
+  @apply text-foreground;
+}
+
+.ant-tree-node-content-wrapper:hover {
+  @apply bg-accent;
+}
+
+.ant-tree-node-selected {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Transfer improvements */
+.ant-transfer-list {
+  @apply border border-border;
+}
+
+.ant-transfer-list-header {
+  @apply bg-secondary text-secondary-foreground border-border;
+}
+
+.ant-transfer-list-content-item {
+  @apply text-foreground;
+}
+
+.ant-transfer-list-content-item:hover {
+  @apply bg-accent;
+}
+
+/* Cascader improvements */
+.ant-cascader-menu {
+  @apply bg-card border-border;
+}
+
+.ant-cascader-menu-item {
+  @apply text-foreground;
+}
+
+.ant-cascader-menu-item:hover {
+  @apply bg-accent;
+}
+
+.ant-cascader-menu-item-expand-icon {
+  @apply text-muted-foreground;
+}
+
+/* Mentions improvements */
+.ant-mentions-dropdown {
+  @apply bg-card border border-border;
+}
+
+.ant-mentions-dropdown-menu-item {
+  @apply text-foreground;
+}
+
+.ant-mentions-dropdown-menu-item:hover {
+  @apply bg-accent;
+}
+
+.ant-mentions-dropdown-menu-item-selected {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* AutoComplete improvements */
+.ant-select-dropdown {
+  @apply bg-card border border-border;
+}
+
+.ant-select-item {
+  @apply text-foreground;
+}
+
+.ant-select-item-option-selected {
+  @apply bg-primary text-primary-foreground;
+}
+
+.ant-select-item-option-active {
+  @apply bg-accent;
+}
+
+/* InputNumber improvements */
+.ant-input-number {
+  @apply border-border;
+}
+
+.ant-input-number:focus {
+  @apply border-primary ring-1;
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.ant-input-number-handler-wrap {
+  @apply border-l border-border;
+}
+
+.ant-input-number-handler {
+  @apply border-b border-border;
+}
+
+.ant-input-number-handler:hover {
+  @apply bg-accent;
+}
+
+/* ColorPicker improvements */
+.ant-color-picker-trigger {
+  @apply border border-border;
+}
+
+.ant-color-picker-panel {
+  @apply bg-card border border-border;
+}
+
+/* Segmented improvements */
+.ant-segmented {
+  @apply bg-muted;
+}
+
+.ant-segmented-item {
+  @apply text-foreground;
+}
+
+.ant-segmented-item-selected {
+  @apply bg-card text-foreground;
+}
+
+/* QRCode improvements */
+.ant-qrcode {
+  @apply bg-card;
+}
+
+/* Tour improvements */
+.ant-tour {
+  @apply bg-card border border-border;
+}
+
+.ant-tour-content {
+  @apply bg-card;
+}
+
+.ant-tour-arrow {
+  @apply border-card;
+}
+
+/* FloatButton improvements */
+.ant-float-btn {
+  @apply bg-card border border-border;
+}
+
+.ant-float-btn:hover {
+  @apply bg-accent;
+}
+
+/* Affix improvements */
+.ant-affix {
+  @apply bg-card border border-border;
+}
+
+/* Anchor improvements */
+.ant-anchor {
+  @apply bg-card;
+}
+
+.ant-anchor-link {
+  @apply text-foreground;
+}
+
+.ant-anchor-link:hover {
+  @apply text-primary;
+}
+
+.ant-anchor-link-active {
+  @apply text-primary;
+}
+
+.ant-anchor-ink {
+  @apply bg-primary;
+}
+
+/* BackTop improvements */
+.ant-back-top {
+  @apply bg-card border border-border;
+}
+
+.ant-back-top:hover {
+  @apply bg-accent;
+}
+
+/* Result improvements */
+.ant-result-title {
+  @apply text-foreground;
+}
+
+.ant-result-subtitle {
+  @apply text-muted-foreground;
+}
+
+/* Empty improvements */
+.ant-empty-description {
+  @apply text-muted-foreground;
+}
+
+/* Skeleton improvements */
+.ant-skeleton-title {
+  @apply bg-muted;
+}
+
+.ant-skeleton-paragraph > li {
+  @apply bg-muted;
+}
+
+/* Spin improvements */
+.ant-spin-dot-item {
+  @apply bg-primary;
+}
+
+/* Drawer improvements */
+.ant-drawer-content-wrapper {
+  @apply bg-card;
+}
+
+.ant-drawer-header {
+  @apply border-border;
+}
+
+.ant-drawer-body {
+  @apply bg-card;
+}
+
+.ant-drawer-footer {
+  @apply border-border;
+}
+
+/* Descriptions improvements */
+.ant-descriptions-item-label {
+  @apply text-muted-foreground;
+}
+
+.ant-descriptions-item-content {
+  @apply text-foreground;
+}
+
+.ant-descriptions-bordered .ant-descriptions-item-label,
+.ant-descriptions-bordered .ant-descriptions-item-content {
+  @apply border-border;
+}
+
+/* TreeSelect improvements */
+.ant-tree-select-dropdown {
+  @apply bg-card border border-border;
+}
+
+.ant-tree-select-tree {
+  @apply bg-card;
+}
+
+.ant-tree-select-tree-node-content-wrapper {
+  @apply text-foreground;
+}
+
+.ant-tree-select-tree-node-content-wrapper:hover {
+  @apply bg-accent;
+}
+
+.ant-tree-select-tree-node-selected {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* ==========================================================================
    CSS Variables & Design Tokens
    ========================================================================== */
 
