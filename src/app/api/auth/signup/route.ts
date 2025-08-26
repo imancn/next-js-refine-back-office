@@ -5,9 +5,9 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 
 const signupSchema = z.object({
-  email: z.string().email().optional(),
+  email: z.string().email(),
   phone: z.string().optional(),
-  password: z.string().min(8).optional(),
+  password: z.string().min(8),
   firstName: z.string().min(2).optional(),
   lastName: z.string().min(2).optional(),
   provider: z.enum(['google', 'apple']).optional(),
@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, phone, password, firstName, lastName, provider } = signupSchema.parse(body);
 
-    // Validate that at least email or phone is provided
-    if (!email && !phone) {
+    // Validate that email is provided (required by schema)
+    if (!email) {
       return NextResponse.json(
-        { error: 'Email or phone is required' },
+        { error: 'Email is required' },
         { status: 400 }
       );
     }
@@ -49,13 +49,13 @@ export async function POST(request: NextRequest) {
       hashedPassword = await bcrypt.hash(password, 12);
     }
 
-    // Create user data object with only defined fields
+    // Create user data object with required and optional fields
     const userData: any = {
+      email, // Email is required
       role: 'USER', // Default role
       status: 'ACTIVE', // Set as active for local development (no verification required)
     };
 
-    if (email) userData.email = email;
     if (phone) userData.phone = phone;
     if (hashedPassword) userData.password = hashedPassword;
     if (firstName) userData.firstName = firstName;
@@ -153,14 +153,20 @@ export async function POST(request: NextRequest) {
     console.error('Signup error:', error);
     
     if (error instanceof z.ZodError) {
+      console.error('Validation error details:', error.errors);
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
         { status: 400 }
       );
     }
 
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
