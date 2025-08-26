@@ -34,6 +34,20 @@ export default function EntityListPage() {
 
   const entityConfig = getEntityConfig(entityName as string);
 
+  // useEffect must be called before any conditional returns
+  useEffect(() => {
+    if (entityConfig && entityName && typeof entityName === 'string') {
+      // Load mock data
+      setLoading(true);
+      setTimeout(() => {
+        const mockData = generateMockData(50);
+        setData(mockData);
+        setTotal(mockData.length);
+        setLoading(false);
+      }, 500);
+    }
+  }, [entityConfig, entityName]);
+
   // Don't render until we have the entityName from the router
   if (!entityName || typeof entityName !== 'string') {
     return (
@@ -98,19 +112,6 @@ export default function EntityListPage() {
     }
     return mockData;
   };
-
-  useEffect(() => {
-    if (entityConfig) {
-      // Load mock data
-      setLoading(true);
-      setTimeout(() => {
-        const mockData = generateMockData(50);
-        setData(mockData);
-        setTotal(mockData.length);
-        setLoading(false);
-      }, 500);
-    }
-  }, [entityConfig]);
 
   if (!entityConfig) {
     return (

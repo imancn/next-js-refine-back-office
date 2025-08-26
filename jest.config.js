@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
@@ -9,7 +10,7 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   collectCoverageFrom: [
@@ -40,7 +41,7 @@ const customJestConfig = {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
   transformIgnorePatterns: [
-    '/node_modules/',
+    '/node_modules/(?!(next-auth|@auth|@auth/core|@auth/prisma-adapter)/)',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
@@ -49,10 +50,13 @@ const customJestConfig = {
       tsconfig: 'tsconfig.jest.json',
     },
   },
-  // Mock Next.js router
-  moduleNameMapping: {
+  // Mock Next.js router and next-auth
+  moduleNameMapper: {
     '^next/router$': '<rootDir>/src/__mocks__/next/router.ts',
     '^next/navigation$': '<rootDir>/src/__mocks__/next/navigation.ts',
+    '^next-auth$': '<rootDir>/src/__mocks__/next-auth.ts',
+    '^next-auth/providers/(.*)$': '<rootDir>/src/__mocks__/next-auth.ts',
+    '^@auth/prisma-adapter$': '<rootDir>/src/__mocks__/next-auth.ts',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   // Environment variables for testing

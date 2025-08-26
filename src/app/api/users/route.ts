@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
         // Don't include password or sensitive fields
       },
       orderBy: {
-        [validatedParams.sortBy]: validatedParams.sortOrder,
+        [validatedParams.sortBy as keyof typeof prisma.user.fields]: validatedParams.sortOrder,
       },
       skip: (validatedParams.page - 1) * validatedParams.limit,
       take: validatedParams.limit,
