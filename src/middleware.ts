@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
-import { checkRouteAccess, logAuditEvent } from '@/lib/auth';
+import { checkRouteAccess } from './lib/auth';
 
 // Define protected routes and their required roles
 const protectedRoutes = {

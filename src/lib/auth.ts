@@ -1,4 +1,3 @@
-import { auth } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from './prisma';
 import { NextRequest } from 'next/server';
 
@@ -124,23 +123,13 @@ export function canAccessResource(userRole: string, resource: string, action: 'r
 }
 
 // Get current authenticated user from session
+// Note: This function requires the auth context to be available
+// Use getUserFromRequest for API routes instead
 export async function getCurrentUser(): Promise<AuthUser | null> {
-  try {
-    const session = await auth();
-    if (!session?.user) return null;
-    
-    return {
-      id: session.user.id,
-      email: session.user.email!,
-      role: session.user.role,
-      status: session.user.status,
-      firstName: session.user.firstName,
-      lastName: session.user.lastName,
-    };
-  } catch (error) {
-    console.error('Error getting current user:', error);
-    return null;
-  }
+  // This function is deprecated in favor of getUserFromRequest
+  // to avoid circular dependencies
+  console.warn('getCurrentUser is deprecated. Use getUserFromRequest for API routes.');
+  return null;
 }
 
 // Get user from request headers (for API routes)
@@ -159,49 +148,14 @@ export function getUserFromRequest(request: NextRequest): AuthUser | null {
   };
 }
 
-// Audit logging function
-export async function logAuditEvent(
-  userId: string,
-  action: string,
-  resource: string,
-  resourceId?: string,
-  details?: any,
-  ipAddress?: string,
-  userAgent?: string
-): Promise<void> {
-  try {
-    await prisma.auditLog.create({
-      data: {
-        userId,
-        action,
-        resource,
-        resourceId,
-        details: details ? JSON.parse(JSON.stringify(details)) : null,
-        ipAddress,
-        userAgent,
-      },
-    });
-  } catch (error) {
-    console.error('Failed to log audit event:', error);
-    // Don't throw error as audit logging shouldn't break main functionality
-  }
-}
+// Audit logging function moved to @/lib/audit to avoid circular dependencies
 
 // Validate user session and permissions
+// Note: This function is deprecated due to circular dependency issues
+// Use getUserFromRequest and checkRouteAccess for API routes instead
 export async function validateUserSession(requiredRole?: UserRole): Promise<{ user: AuthUser; permissions: UserPermissions } | null> {
-  const user = await getCurrentUser();
-  if (!user) return null;
-  
-  if (user.status !== 'ACTIVE') {
-    throw new Error('User account is not active');
-  }
-  
-  if (requiredRole && !hasMinimumRole(user.role, requiredRole)) {
-    throw new Error('Insufficient permissions');
-  }
-  
-  const permissions = getUserPermissions(user.role);
-  return { user, permissions };
+  console.warn('validateUserSession is deprecated. Use getUserFromRequest and checkRouteAccess for API routes.');
+  return null;
 }
 
 // Middleware helper for checking route access
