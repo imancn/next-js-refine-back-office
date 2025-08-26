@@ -38,6 +38,9 @@ model User {
   
   // Refresh tokens
   refreshTokens     RefreshToken[]
+  
+  // Audit logs
+  auditLogs         AuditLog[]
 
   @@map("users")
 }
@@ -93,6 +96,23 @@ model RefreshToken {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("refresh_tokens")
+}
+
+// Audit logging model
+model AuditLog {
+  id          String      @id @default(cuid())
+  userId      String
+  action      String      // e.g., "LOGIN", "CREATE_USER", "UPDATE_SETTINGS"
+  resource    String      // e.g., "User", "Settings", "Product"
+  resourceId  String?     // ID of the affected resource
+  details     Json?       // Additional details about the action
+  ipAddress   String?     // IP address of the user
+  userAgent   String?     // User agent string
+  timestamp   DateTime    @default(now())
+  
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
 }
 
 enum UserRole {
