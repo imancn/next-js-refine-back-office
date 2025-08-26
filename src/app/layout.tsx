@@ -5,6 +5,7 @@ import { I18nProvider } from "./i18n-mock";
 import { BackOfficeLayout } from "./components/BackOfficeLayout";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { AuthModalWrapper } from "./components/AuthModalWrapper";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -38,6 +39,7 @@ export default function RootLayout({
               <BackOfficeLayout>
                 {children}
               </BackOfficeLayout>
+              <AuthModalWrapper />
             </SettingsProvider>
           </AuthProvider>
         </I18nProvider>
