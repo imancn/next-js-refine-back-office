@@ -18,6 +18,7 @@ import {
   ChevronDown,
   Database
 } from 'lucide-react';
+import { AuthModalWrapper } from './AuthModalWrapper';
 
 interface BackOfficeLayoutProps {
   children: React.ReactNode;
@@ -199,6 +200,9 @@ export function BackOfficeLayout({ children }: BackOfficeLayoutProps) {
           </div>
         </main>
       </div>
+      
+      {/* Auth Modal */}
+      <AuthModalWrapper />
     </div>
   );
 }
