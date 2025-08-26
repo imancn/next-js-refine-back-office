@@ -4,6 +4,9 @@ import "./globals.css";
 import { I18nProvider } from "./i18n-mock";
 import { BackOfficeLayout } from "./components/BackOfficeLayout";
 import { SettingsProvider } from "./contexts/SettingsContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AuthModal } from "./components/AuthModal";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +34,29 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <I18nProvider>
-          <SettingsProvider>
-            <BackOfficeLayout>
-              {children}
-            </BackOfficeLayout>
-          </SettingsProvider>
+          <AuthProvider>
+            <SettingsProvider>
+              <BackOfficeLayout>
+                {children}
+              </BackOfficeLayout>
+              <AuthModalWrapper />
+            </SettingsProvider>
+          </AuthProvider>
         </I18nProvider>
+        <Toaster position="top-right" />
       </body>
     </html>
+  );
+}
+
+// Wrapper component to use the auth context
+function AuthModalWrapper() {
+  const { isAuthModalOpen, hideAuthModal } = useAuth();
+  
+  return (
+    <AuthModal 
+      isOpen={isAuthModalOpen} 
+      onClose={hideAuthModal} 
+    />
   );
 }
