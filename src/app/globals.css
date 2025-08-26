@@ -1,5 +1,6 @@
-@import "tailwindcss";
-@import "../styles/index.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ==========================================================================
    CSS Variables & Design Tokens
@@ -293,3 +294,174 @@ body {
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   Custom Component Styles
+   ========================================================================== */
+
+/* Button size utilities */
+.btn-xs { @apply h-7 px-2 text-xs; }
+.btn-sm { @apply h-9 px-3; }
+.btn-md { @apply h-10 py-2 px-4; }
+.btn-lg { @apply h-11 px-8; }
+.btn-xl { @apply h-12 px-10 text-lg; }
+
+/* Input size utilities */
+.input-xs { @apply h-7 px-2 text-xs; }
+.input-sm { @apply h-8 px-3 text-sm; }
+.input-md { @apply h-10 px-3; }
+.input-lg { @apply h-11 px-4 text-base; }
+.input-xl { @apply h-12 px-4 text-lg; }
+
+/* Card size utilities */
+.card-sm { @apply p-4; }
+.card-md { @apply p-6; }
+.card-lg { @apply p-8; }
+.card-xl { @apply p-10; }
+
+/* Badge size utilities */
+.badge-xs { @apply px-1.5 py-0.5 text-xs; }
+.badge-sm { @apply px-2 py-0.5 text-xs; }
+.badge-md { @apply px-2.5 py-0.5 text-xs; }
+.badge-lg { @apply px-3 py-1 text-sm; }
+.badge-xl { @apply px-4 py-1.5 text-base; }
+
+/* Table base styles */
+.table {
+  @apply w-full caption-bottom text-sm;
+}
+
+.table-header {
+  @apply border-b bg-muted bg-opacity-50;
+}
+
+.table-row {
+  @apply border-b transition-colors hover:bg-muted hover:bg-opacity-50 data-[state=selected]:bg-muted;
+}
+
+.table-cell {
+  @apply p-4 align-middle [&:has([role=checkbox])]:pr-0;
+}
+
+.table-head {
+  @apply h-12 px-4 text-left align-middle font-medium text-muted-foreground;
+}
+
+/* Form base styles */
+.form {
+  @apply space-y-6;
+}
+
+.form-group {
+  @apply space-y-2;
+}
+
+.form-label {
+  @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+}
+
+.form-error {
+  @apply text-sm text-destructive;
+}
+
+/* Modal base styles */
+.modal {
+  @apply fixed inset-0 z-50 flex items-center justify-center;
+}
+
+.modal-overlay {
+  @apply fixed inset-0 z-50 bg-background bg-opacity-80 backdrop-blur-sm;
+}
+
+.modal-content {
+  @apply relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg;
+  @apply duration-200;
+}
+
+/* Navigation base styles */
+.nav {
+  @apply flex items-center space-x-4 lg:space-x-6;
+}
+
+.nav-link {
+  @apply text-sm font-medium transition-colors hover:text-primary;
+}
+
+.nav-link-active {
+  @apply text-black dark:text-white;
+}
+
+/* Sidebar base styles */
+.sidebar {
+  @apply fixed left-0 top-0 z-40 h-screen w-sidebar -translate-x-full border-r bg-background;
+  @apply transition-transform duration-300 ease-in-out;
+}
+
+.sidebar-open {
+  @apply translate-x-0;
+}
+
+.sidebar-narrow {
+  @apply w-sidebar-narrow;
+}
+
+.sidebar-wide {
+  @apply w-sidebar-wide;
+}
+
+/* Header base styles */
+.header {
+  @apply sticky top-0 z-40 w-full border-b bg-background bg-opacity-95 backdrop-blur supports-[backdrop-filter]:bg-background supports-[backdrop-filter]:bg-opacity-60;
+}
+
+.header-content {
+  @apply flex h-16 items-center justify-between px-4;
+}
+
+/* Footer base styles */
+.footer {
+  @apply border-t bg-background;
+}
+
+.footer-content {
+  @apply container flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0;
+}
+
+/* Loading states */
+.loading {
+  @apply animate-pulse bg-muted;
+}
+
+.loading-spinner {
+  @apply animate-spin rounded-full border-2 border-current border-t-transparent;
+}
+
+/* Skeleton loading */
+.skeleton {
+  @apply animate-pulse rounded-md bg-muted;
+}
+
+/* Focus ring utilities */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+}
+
+/* Hover effects */
+.hover-lift {
+  @apply transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg;
+}
+
+.hover-scale {
+  @apply transition-transform duration-200 hover:scale-105;
+}
+
+/* Responsive utilities */
+.responsive-container {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.responsive-grid {
+  @apply grid gap-6;
+}
+
+
