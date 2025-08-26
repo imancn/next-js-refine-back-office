@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { auth } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from './prisma';
 import { NextRequest } from 'next/server';
 
@@ -127,7 +127,7 @@ export function canAccessResource(userRole: string, resource: string, action: 'r
 // Get current authenticated user from session
 export async function getCurrentUser(): Promise<AuthUser | null> {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user) return null;
     
     return {
