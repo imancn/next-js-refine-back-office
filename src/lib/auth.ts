@@ -1,4 +1,3 @@
-import { getServerSession } from 'next-auth';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from './prisma';
 import { NextRequest } from 'next/server';
@@ -23,13 +22,13 @@ export interface AuthUser {
 }
 
 // Role hierarchy for permission checking
-export const ROLE_HIERARCHY = {
+export const ROLE_HIERARCHY = Object.freeze({
   SUPER_ADMIN: 4,
   ADMIN: 3,
   MANAGER: 2,
   USER: 1,
   GUEST: 0,
-} as const;
+} as const);
 
 export type UserRole = keyof typeof ROLE_HIERARCHY;
 

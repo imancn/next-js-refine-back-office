@@ -9,7 +9,7 @@ import bcrypt from 'bcryptjs';
 import { logAuditEvent } from '@/lib/auth';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma) as any,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -34,7 +34,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials, req) {
         if (!credentials) return null;
 
-        const { email, phone, password, otp } = credentials;
+        const { email, phone, password, otp } = credentials as {
+          email?: string;
+          phone?: string;
+          password?: string;
+          otp?: string;
+        };
 
         // Find user by email or phone
         const user = await prisma.user.findFirst({
@@ -51,11 +56,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // If OTP is provided, verify it
         if (otp) {
           // Verify OTP logic here
-          const isValidOtp = await verifyOTP(email || phone!, otp);
+          const identifier = email || phone;
+          if (!identifier) return null;
+          const isValidOtp = await verifyOTP(identifier as string, otp);
           if (!isValidOtp) return null;
-        } else if (password) {
+        } else if (password && user.password) {
           // Verify password
-          const isValidPassword = await bcrypt.compare(password, user.password!);
+          const isValidPassword = await bcrypt.compare(password, user.password as string);
           if (!isValidPassword) return null;
         } else {
           return null;
@@ -68,8 +75,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           'User',
           user.id,
           { method: 'credentials', email: user.email, phone: user.phone },
-          req.headers?.['x-forwarded-for'] as string || req.headers?.['x-real-ip'] as string,
-          req.headers?.['user-agent'] as string
+          req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || undefined,
+          req.headers.get('user-agent') || undefined
         );
 
         return {
@@ -134,13 +141,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: '/auth/error',
   },
   events: {
-    async signOut({ token }) {
-      if (token?.id) {
+    async signOut({ session, token }: any) {
+      const userId = token?.id || session?.user?.id;
+      if (userId) {
         await logAuditEvent(
-          token.id as string,
+          userId as string,
           'LOGOUT',
           'User',
-          token.id as string
+          userId as string
         );
       }
     },
