@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     // Create user data object with only defined fields
     const userData: any = {
       role: 'USER', // Default role
-      status: 'PENDING_VERIFICATION', // Require verification
+      status: 'ACTIVE', // Set as active for local development (no verification required)
     };
 
     if (email) userData.email = email;
@@ -93,13 +93,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Send verification email/SMS if not OAuth
+    // For local development, we skip email/SMS verification
+    // In production, you would implement proper verification here
     if (!provider) {
       if (email) {
-        await sendEmailVerification(user.id, email);
+        console.log(`User ${user.id} signed up with email: ${email} (verification skipped for local development)`);
       }
       if (phone) {
-        await sendPhoneVerification(user.id, phone);
+        console.log(`User ${user.id} signed up with phone: ${phone} (verification skipped for local development)`);
       }
     }
 
@@ -165,7 +166,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Helper function to send email verification
+// Helper function to send email verification (not used in local development)
 async function sendEmailVerification(userId: string, email: string) {
   const token = Math.random().toString(36).substring(2, 8).toUpperCase();
   
@@ -182,7 +183,7 @@ async function sendEmailVerification(userId: string, email: string) {
   console.log(`Verification email sent to ${email} with token: ${token}`);
 }
 
-// Helper function to send phone verification
+// Helper function to send phone verification (not used in local development)
 async function sendPhoneVerification(userId: string, phone: string) {
   const token = Math.random().toString(36).substring(2, 8).toUpperCase();
   

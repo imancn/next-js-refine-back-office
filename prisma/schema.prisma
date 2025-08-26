@@ -33,9 +33,6 @@ model User {
   // Sessions
   sessions          Session[]
   
-  // Verification tokens
-  verificationTokens VerificationToken[]
-  
   // Refresh tokens
   refreshTokens     RefreshToken[]
   
@@ -80,9 +77,6 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
   
-  // Relation back to User
-  user       User     @relation(fields: [identifier], references: [email], onDelete: Cascade)
-
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
