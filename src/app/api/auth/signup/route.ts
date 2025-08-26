@@ -49,17 +49,21 @@ export async function POST(request: NextRequest) {
       hashedPassword = await bcrypt.hash(password, 12);
     }
 
+    // Create user data object with only defined fields
+    const userData: any = {
+      role: 'USER', // Default role
+      status: 'PENDING_VERIFICATION', // Require verification
+    };
+
+    if (email) userData.email = email;
+    if (phone) userData.phone = phone;
+    if (hashedPassword) userData.password = hashedPassword;
+    if (firstName) userData.firstName = firstName;
+    if (lastName) userData.lastName = lastName;
+
     // Create user
     const user = await prisma.user.create({
-      data: {
-        email,
-        phone,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        role: 'USER', // Default role
-        status: 'PENDING_VERIFICATION', // Require verification
-      },
+      data: userData,
     });
 
     // Generate tokens

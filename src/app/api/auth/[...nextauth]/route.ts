@@ -59,9 +59,9 @@ const handler = NextAuth({
         return {
           id: user.id,
           email: user.email,
-          phone: user.phone,
-          firstName: user.firstName,
-          lastName: user.lastName,
+          phone: user.phone || undefined,
+          firstName: user.firstName || undefined,
+          lastName: user.lastName || undefined,
           role: user.role,
           status: user.status,
         };
@@ -119,7 +119,12 @@ async function verifyOTP(identifier: string, otp: string): Promise<boolean> {
   if (verificationToken) {
     // Delete the used token
     await prisma.verificationToken.delete({
-      where: { id: verificationToken.id },
+      where: { 
+        identifier_token: {
+          identifier: verificationToken.identifier,
+          token: verificationToken.token
+        }
+      },
     });
     return true;
   }

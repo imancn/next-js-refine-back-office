@@ -53,7 +53,12 @@ export async function POST(request: NextRequest) {
 
     // Delete verification token
     await prisma.verificationToken.delete({
-      where: { id: verificationToken.id },
+      where: { 
+        identifier_token: {
+          identifier: verificationToken.identifier,
+          token: verificationToken.token
+        }
+      },
     });
 
     return NextResponse.json({
