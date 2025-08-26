@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getUserFromRequest, logAuditEvent, canAccessResource } from '@/lib/auth';
+import { getUserFromRequest, canAccessResource } from '@/lib/auth';
+import { logAuditEvent } from '@/lib/audit';
 import { userCreateSchema, userUpdateSchema, paginationSchema } from '@/lib/validations';
 import bcrypt from 'bcryptjs';
 
@@ -91,7 +92,6 @@ export async function GET(request: NextRequest) {
       user.id,
       'READ_USERS',
       'Users',
-      undefined,
       { 
         page: validatedParams.page, 
         limit: validatedParams.limit, 
@@ -197,8 +197,8 @@ export async function POST(request: NextRequest) {
       user.id,
       'CREATE_USER',
       'User',
-      newUser.id,
       { 
+        resourceId: newUser.id,
         email: newUser.email, 
         role: newUser.role, 
         status: newUser.status 

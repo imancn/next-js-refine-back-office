@@ -6,7 +6,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { logAuditEvent } from '@/lib/auth';
+import { logAuditEvent } from '@/lib/audit';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma) as any,
@@ -73,8 +73,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           user.id,
           'LOGIN',
           'User',
-          user.id,
-          { method: 'credentials', email: user.email, phone: user.phone },
+          { 
+            resourceId: user.id,
+            method: 'credentials', 
+            email: user.email, 
+            phone: user.phone 
+          },
           req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || undefined,
           req.headers.get('user-agent') || undefined
         );
@@ -106,8 +110,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           user.id,
           'OAUTH_LOGIN',
           'User',
-          user.id,
-          { provider: account.provider, email: user.email }
+          { 
+            resourceId: user.id,
+            provider: account.provider, 
+            email: user.email 
+          }
         );
       }
       return true;
@@ -148,7 +155,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           userId as string,
           'LOGOUT',
           'User',
-          userId as string
+          { resourceId: userId as string }
         );
       }
     },

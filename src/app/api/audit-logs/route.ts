@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getUserFromRequest, logAuditEvent, canAccessResource } from '@/lib/auth';
+import { getUserFromRequest, canAccessResource } from '@/lib/auth';
+import { logAuditEvent } from '@/lib/audit';
 import { paginationSchema } from '@/lib/validations';
 
 // GET /api/audit-logs - Get audit logs with pagination and filtering
@@ -93,7 +94,6 @@ export async function GET(request: NextRequest) {
       user.id,
       'READ_AUDIT_LOGS',
       'AuditLogs',
-      undefined,
       { 
         page: validatedParams.page, 
         limit: validatedParams.limit, 
@@ -186,8 +186,11 @@ export async function POST(request: NextRequest) {
       user.id,
       'CREATE_AUDIT_LOG',
       'AuditLog',
-      auditLog.id,
-      { action, resource, resourceId },
+      { 
+        resourceId: auditLog.id,
+        action, 
+        resource
+      },
       request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
       request.headers.get('user-agent') || undefined
     );

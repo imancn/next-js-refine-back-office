@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getUserFromRequest, logAuditEvent, canAccessResource } from '@/lib/auth';
+import { getUserFromRequest, canAccessResource } from '@/lib/auth';
+import { logAuditEvent } from '@/lib/audit';
 import { settingsUpdateSchema } from '@/lib/validations';
 
 // GET /api/settings - Get application settings
@@ -42,7 +43,6 @@ export async function GET(request: NextRequest) {
       user.id,
       'READ_SETTINGS',
       'Settings',
-      undefined,
       { settings: Object.keys(settings) },
       request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
       request.headers.get('user-agent') || undefined
@@ -94,7 +94,6 @@ export async function PUT(request: NextRequest) {
       user.id,
       'UPDATE_SETTINGS',
       'Settings',
-      undefined,
       { 
         updatedFields: Object.keys(validatedData),
         newValues: validatedData 
@@ -153,7 +152,6 @@ export async function PATCH(request: NextRequest) {
       user.id,
       'UPDATE_SETTINGS',
       'Settings',
-      undefined,
       { 
         updatedFields: Object.keys(validatedData),
         newValues: validatedData 
