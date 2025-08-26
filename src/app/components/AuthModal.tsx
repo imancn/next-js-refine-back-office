@@ -141,12 +141,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       const data = loginForm.getValues();
       if (loginMethod === 'email' && data.email) {
         // Call API to send email OTP
-        console.log('Sending email OTP to:', data.email);
-        setOtpSent(true);
+        const response = await fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: data.email }),
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('OTP sent successfully:', result);
+          setOtpSent(true);
+        } else {
+          const error = await response.json();
+          console.error('Failed to send OTP:', error);
+        }
       } else if (loginMethod === 'phone' && data.phone) {
         // Call API to send SMS OTP
-        console.log('Sending SMS OTP to:', data.phone);
-        setOtpSent(true);
+        const response = await fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ phone: data.phone }),
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('OTP sent successfully:', result);
+          setOtpSent(true);
+        } else {
+          const error = await response.json();
+          console.error('Failed to send OTP:', error);
+        }
       }
     } catch (error) {
       console.error('Failed to send OTP:', error);
@@ -160,7 +188,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
+        onClick={(e) => {
+          // Only close if clicking directly on the backdrop, not on modal content
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
       />
       
       {/* Modal */}
@@ -269,24 +302,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Login Method Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-        {(['email', 'phone'] as const).map((method) => (
-          <button
-            key={method}
-            onClick={() => setLoginMethod(method)}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              loginMethod === method
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {method === 'email' ? <Mail className="w-4 h-4 inline mr-1" /> : <Phone className="w-4 h-4 inline mr-1" />}
-            {method.charAt(0).toUpperCase() + method.slice(1)}
-          </button>
-        ))}
-      </div>
-
       {/* OAuth Buttons */}
       <div className="space-y-3">
         <button
@@ -322,6 +337,24 @@ const LoginForm: React.FC<LoginFormProps> = ({
         <div className="relative flex justify-center text-sm">
           <span className="px-2 bg-white text-gray-500">Or continue with</span>
         </div>
+      </div>
+
+      {/* Login Method Tabs - Moved below "Or continue with" */}
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+        {(['email', 'phone'] as const).map((method) => (
+          <button
+            key={method}
+            onClick={() => setLoginMethod(method)}
+            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+              loginMethod === method
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            {method === 'email' ? <Mail className="w-4 h-4 inline mr-1" /> : <Phone className="w-4 h-4 inline mr-1" />}
+            {method.charAt(0).toUpperCase() + method.slice(1)}
+          </button>
+        ))}
       </div>
 
       {/* Login Form */}
@@ -496,24 +529,6 @@ const SignupForm: React.FC<SignupFormProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Signup Method Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-        {(['email', 'phone'] as const).map((method) => (
-          <button
-            key={method}
-            onClick={() => setSignupMethod(method)}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              signupMethod === method
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {method === 'email' ? <Mail className="w-4 h-4 inline mr-1" /> : <Phone className="w-4 h-4 inline mr-1" />}
-            {method.charAt(0).toUpperCase() + method.slice(1)}
-          </button>
-        ))}
-      </div>
-
       {/* OAuth Buttons */}
       <div className="space-y-3">
         <button
@@ -549,6 +564,24 @@ const SignupForm: React.FC<SignupFormProps> = ({
         <div className="relative flex justify-center text-sm">
           <span className="px-2 bg-white text-gray-500">Or continue with</span>
         </div>
+      </div>
+
+      {/* Signup Method Tabs - Moved below "Or continue with" */}
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+        {(['email', 'phone'] as const).map((method) => (
+          <button
+            key={method}
+            onClick={() => setSignupMethod(method)}
+            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+              signupMethod === method
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            {method === 'email' ? <Mail className="w-4 h-4 inline mr-1" /> : <Phone className="w-4 h-4 inline mr-1" />}
+            {method.charAt(0).toUpperCase() + method.slice(1)}
+          </button>
+        ))}
       </div>
 
       {/* Signup Form */}

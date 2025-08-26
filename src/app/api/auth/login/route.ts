@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     // Check if user is active
     if (user.status !== 'ACTIVE') {
       return NextResponse.json(
-        { error: 'Account is not active' },
+        { error: 'Account is not active. Please contact support.' },
         { status: 401 }
       );
     }
@@ -83,6 +83,12 @@ export async function POST(request: NextRequest) {
     } else if (password && user.password) {
       // Verify password
       isValidCredentials = await bcrypt.compare(password, user.password);
+    } else if (password && !user.password) {
+      // User doesn't have a password (OAuth user)
+      return NextResponse.json(
+        { error: 'This account was created with OAuth. Please use OAuth login.' },
+        { status: 401 }
+      );
     }
 
     if (!isValidCredentials) {
