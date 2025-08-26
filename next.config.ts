@@ -17,14 +17,16 @@ const nextConfig: NextConfig = {
       'node_modules/@esbuild/linux-x64',
     ],
   },
-  webpack: (config, { isServer }) => {
-    // Exclude refine-backoffice directory from compilation
-    config.module.rules.push({
-      test: /\.(ts|tsx)$/,
-      exclude: /refine-backoffice-temp/,
-    });
-    
-    return config;
+  // Turbopack configuration
+  experimental: {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
   // Security headers
   async headers() {
