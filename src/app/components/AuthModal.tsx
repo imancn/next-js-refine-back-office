@@ -430,15 +430,20 @@ const LoginForm: React.FC<LoginFormProps> = ({
                   value={otp}
                   onChange={setOtp}
                   numInputs={6}
-                  inputStyle={{
-                    width: '40px',
-                    height: '40px',
-                    margin: '0 4px',
-                    fontSize: '16px',
-                    borderRadius: '4px',
-                    border: '1px solid #d1d5db',
-                    textAlign: 'center',
-                  }}
+                  renderInput={(inputProps, index) => (
+                    <input
+                      {...inputProps}
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        margin: '0 4px',
+                        fontSize: '16px',
+                        borderRadius: '4px',
+                        border: '1px solid #d1d5db',
+                        textAlign: 'center',
+                      }}
+                    />
+                  )}
                 />
                 <button
                   type="button"

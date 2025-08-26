@@ -176,10 +176,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Fetch user data
           const response = await api.get(`/auth/me`);
           setUser(response.data.user);
+        } else {
+          // No tokens found, show auth modal
+          setIsAuthModalOpen(true);
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
         clearAuthCookies();
+        // Show auth modal on auth failure
+        setIsAuthModalOpen(true);
       } finally {
         setIsLoading(false);
       }
@@ -201,6 +206,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       window.removeEventListener('hideAuthModal', handleHideAuthModal);
     };
   }, []);
+
+  // Auto-show auth modal when user becomes unauthenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      setIsAuthModalOpen(true);
+    }
+  }, [isLoading, isAuthenticated]);
 
   const login = useCallback(async (credentials: LoginCredentials): Promise<void> => {
     try {
