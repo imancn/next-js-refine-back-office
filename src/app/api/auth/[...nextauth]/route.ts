@@ -1,18 +1,24 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import GitHubProvider from 'next-auth/providers/github';
 import AppleProvider from 'next-auth/providers/apple';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { logAuditEvent } from '@/lib/auth';
 
-const handler = NextAuth({
+export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
     AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID!,
@@ -26,7 +32,7 @@ const handler = NextAuth({
         password: { label: 'Password', type: 'password' },
         otp: { label: 'OTP', type: 'text' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials) return null;
 
         const { email, phone, password, otp } = credentials;
@@ -56,6 +62,17 @@ const handler = NextAuth({
           return null;
         }
 
+        // Log successful login
+        await logAuditEvent(
+          user.id,
+          'LOGIN',
+          'User',
+          user.id,
+          { method: 'credentials', email: user.email, phone: user.phone },
+          req.headers?.['x-forwarded-for'] as string || req.headers?.['x-real-ip'] as string,
+          req.headers?.['user-agent'] as string
+        );
+
         return {
           id: user.id,
           email: user.email,
@@ -70,13 +87,32 @@ const handler = NextAuth({
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 24 * 60 * 60, // 24 hours
+  },
+  jwt: {
+    maxAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Log OAuth sign-in
+      if (account && account.provider !== 'credentials') {
+        await logAuditEvent(
+          user.id,
+          'OAUTH_LOGIN',
+          'User',
+          user.id,
+          { provider: account.provider, email: user.email }
+        );
+      }
+      return true;
+    },
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.status = user.status;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
       }
       if (account) {
         token.provider = account.provider;
@@ -88,6 +124,8 @@ const handler = NextAuth({
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.status = token.status as string;
+        session.user.firstName = token.firstName as string;
+        session.user.lastName = token.lastName as string;
       }
       return session;
     },
@@ -96,7 +134,21 @@ const handler = NextAuth({
     signIn: '/auth/signin',
     error: '/auth/error',
   },
-});
+  events: {
+    async signOut({ token }) {
+      if (token?.id) {
+        await logAuditEvent(
+          token.id as string,
+          'LOGOUT',
+          'User',
+          token.id as string
+        );
+      }
+    },
+  },
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
+import { checkRouteAccess, logAuditEvent } from '@/lib/auth';
 
 // Define protected routes and their required roles
 const protectedRoutes = {
@@ -9,15 +10,17 @@ const protectedRoutes = {
   '/settings': ['SUPER_ADMIN', 'ADMIN'],
   '/analytics': ['SUPER_ADMIN', 'ADMIN', 'MANAGER'],
   '/reports': ['SUPER_ADMIN', 'ADMIN', 'MANAGER'],
+  '/products': ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'USER'],
+  '/orders': ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'USER'],
 };
 
 // Define public routes that don't require authentication
 const publicRoutes = [
-  '/',
   '/auth',
   '/api/auth',
   '/_next',
   '/favicon.ico',
+  '/api/webhooks', // For webhook endpoints
 ];
 
 export async function middleware(request: NextRequest) {
@@ -31,7 +34,7 @@ export async function middleware(request: NextRequest) {
   // Check if route requires authentication
   const requiresAuth = Object.keys(protectedRoutes).some(route => 
     pathname.startsWith(route)
-  );
+  ) || (!pathname.startsWith('/api/') && pathname !== '/');
 
   if (!requiresAuth) {
     return NextResponse.next();
@@ -42,7 +45,7 @@ export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refresh_token')?.value;
 
   if (!accessToken) {
-    // No access token, redirect to login or show auth modal
+    // No access token, redirect to login
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -50,8 +53,8 @@ export async function middleware(request: NextRequest) {
       );
     }
     
-    // For non-API routes, redirect to home page (auth modal will be triggered)
-    return NextResponse.redirect(new URL('/', request.url));
+    // For non-API routes, redirect to login page
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   try {
@@ -61,13 +64,14 @@ export async function middleware(request: NextRequest) {
     
     const userRole = payload.role as string;
     const userStatus = payload.status as string;
+    const userId = payload.userId as string;
 
     // Check if user is active
     if (userStatus !== 'ACTIVE') {
       throw new Error('User account is not active');
     }
 
-    // Check role-based access
+    // Check role-based access for protected routes
     const requiredRoles = protectedRoutes[pathname as keyof typeof protectedRoutes];
     if (requiredRoles && !requiredRoles.includes(userRole)) {
       if (pathname.startsWith('/api/')) {
@@ -77,14 +81,26 @@ export async function middleware(request: NextRequest) {
         );
       }
       
-      // Redirect to unauthorized page or home
-      return NextResponse.redirect(new URL('/', request.url));
+      // Redirect to unauthorized page
+      return NextResponse.redirect(new URL('/auth/unauthorized', request.url));
+    }
+
+    // Check general route access
+    if (!checkRouteAccess(userRole, pathname)) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { error: 'Insufficient permissions' },
+          { status: 403 }
+        );
+      }
+      
+      return NextResponse.redirect(new URL('/auth/unauthorized', request.url));
     }
 
     // Add user info to headers for API routes
     if (pathname.startsWith('/api/')) {
       const requestHeaders = new Headers(request.headers);
-      requestHeaders.set('x-user-id', payload.userId as string);
+      requestHeaders.set('x-user-id', userId);
       requestHeaders.set('x-user-role', userRole);
       requestHeaders.set('x-user-email', payload.email as string);
 
@@ -131,7 +147,7 @@ export async function middleware(request: NextRequest) {
     // Clear invalid cookies
     const response = pathname.startsWith('/api/')
       ? NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      : NextResponse.redirect(new URL('/', request.url));
+      : NextResponse.redirect(new URL('/auth/login', request.url));
 
     response.cookies.set('access_token', '', { maxAge: 0 });
     response.cookies.set('refresh_token', '', { maxAge: 0 });
