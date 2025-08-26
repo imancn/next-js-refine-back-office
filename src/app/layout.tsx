@@ -7,6 +7,7 @@ import { SettingsProvider } from "./contexts/SettingsContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AuthGuard } from "./components/AuthGuard";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,15 +35,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <I18nProvider>
-          <AuthProvider>
-            <SettingsProvider>
-              <AuthGuard>
-                <BackOfficeLayout>
-                  {children}
-                </BackOfficeLayout>
-              </AuthGuard>
-            </SettingsProvider>
-          </AuthProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <SettingsProvider>
+                <AuthGuard>
+                  <BackOfficeLayout>
+                    {children}
+                  </BackOfficeLayout>
+                </AuthGuard>
+              </SettingsProvider>
+            </AuthProvider>
+          </ThemeProvider>
         </I18nProvider>
         <Toaster position="top-right" />
       </body>

@@ -63,7 +63,8 @@ const quickActions = [
   { name: 'Add User', href: '/users/new', icon: Plus, color: 'blue' },
   { name: 'Add Product', href: '/products/new', icon: Plus, color: 'green' },
   { name: 'View Analytics', href: '/analytics', icon: BarChart3, color: 'purple' },
-  { name: 'Generate Report', href: '/reports', icon: FileText, color: 'orange' }
+  { name: 'Generate Report', href: '/reports', icon: FileText, color: 'orange' },
+  { name: 'Ant Design Demo', href: '/antd-demo', icon: BarChart3, color: 'indigo' }
 ];
 
 export default function Dashboard() {
