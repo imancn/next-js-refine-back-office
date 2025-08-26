@@ -1,0 +1,226 @@
+/* ==========================================================================
+   Main Styles Index
+   ========================================================================== */
+
+/* Import base styles first */
+@import './themes/theme.css';
+@import './components/base.css';
+@import './layouts/layout.css';
+
+/* ==========================================================================
+   Additional Utility Classes
+   ========================================================================== */
+
+/* Spacing utilities */
+.space-y-xs { @apply space-y-1; }
+.space-y-sm { @apply space-y-2; }
+.space-y-md { @apply space-y-4; }
+.space-y-lg { @apply space-y-6; }
+.space-y-xl { @apply space-y-8; }
+
+.space-x-xs { @apply space-x-1; }
+.space-x-sm { @apply space-x-2; }
+.space-x-md { @apply space-x-4; }
+.space-x-lg { @apply space-x-6; }
+.space-x-xl { @apply space-x-8; }
+
+/* Padding utilities */
+.p-xs { @apply p-1; }
+.p-sm { @apply p-2; }
+.p-md { @apply p-4; }
+.p-lg { @apply p-6; }
+.p-xl { @apply p-8; }
+
+.px-xs { @apply px-1; }
+.px-sm { @apply px-2; }
+.px-md { @apply px-4; }
+.px-lg { @apply px-6; }
+.px-xl { @apply px-8; }
+
+.py-xs { @apply py-1; }
+.py-sm { @apply py-2; }
+.py-md { @apply py-4; }
+.py-lg { @apply py-6; }
+.py-xl { @apply py-8; }
+
+/* Margin utilities */
+.m-xs { @apply m-1; }
+.m-sm { @apply m-2; }
+.m-md { @apply m-4; }
+.m-lg { @apply m-6; }
+.m-xl { @apply m-8; }
+
+.mx-xs { @apply mx-1; }
+.mx-sm { @apply mx-2; }
+.mx-md { @apply mx-4; }
+.mx-lg { @apply mx-6; }
+.mx-xl { @apply mx-8; }
+
+.my-xs { @apply my-1; }
+.my-sm { @apply my-2; }
+.my-md { @apply my-4; }
+.my-lg { @apply my-6; }
+.my-xl { @apply my-8; }
+
+/* Border utilities */
+.border-xs { @apply border; }
+.border-sm { @apply border-2; }
+.border-md { @apply border-4; }
+.border-lg { @apply border-8; }
+
+.rounded-xs { @apply rounded; }
+.rounded-sm { @apply rounded-sm; }
+.rounded-md { @apply rounded-md; }
+.rounded-lg { @apply rounded-lg; }
+.rounded-xl { @apply rounded-xl; }
+.rounded-full { @apply rounded-full; }
+
+/* Shadow utilities */
+.shadow-xs { @apply shadow-sm; }
+.shadow-sm { @apply shadow; }
+.shadow-md { @apply shadow-md; }
+.shadow-lg { @apply shadow-lg; }
+.shadow-xl { @apply shadow-xl; }
+.shadow-2xl { @apply shadow-2xl; }
+
+/* Text utilities */
+.text-xs { @apply text-xs; }
+.text-sm { @apply text-sm; }
+.text-base { @apply text-base; }
+.text-lg { @apply text-lg; }
+.text-xl { @apply text-xl; }
+.text-2xl { @apply text-2xl; }
+.text-3xl { @apply text-3xl; }
+.text-4xl { @apply text-4xl; }
+.text-5xl { @apply text-5xl; }
+
+.font-light { @apply font-light; }
+.font-normal { @apply font-normal; }
+.font-medium { @apply font-medium; }
+.font-semibold { @apply font-semibold; }
+.font-bold { @apply font-bold; }
+.font-extrabold { @apply font-extrabold; }
+
+/* Display utilities */
+.block { @apply block; }
+.inline-block { @apply inline-block; }
+.inline { @apply inline; }
+.flex { @apply flex; }
+.inline-flex { @apply inline-flex; }
+.grid { @apply grid; }
+.inline-grid { @apply inline-grid; }
+.hidden { @apply hidden; }
+
+/* Position utilities */
+.static { @apply static; }
+.fixed { @apply fixed; }
+.absolute { @apply absolute; }
+.relative { @apply relative; }
+.sticky { @apply sticky; }
+
+/* Z-index utilities */
+.z-0 { @apply z-0; }
+.z-10 { @apply z-10; }
+.z-20 { @apply z-20; }
+.z-30 { @apply z-30; }
+.z-40 { @apply z-40; }
+.z-50 { @apply z-50; }
+
+/* Overflow utilities */
+.overflow-auto { @apply overflow-auto; }
+.overflow-hidden { @apply overflow-hidden; }
+.overflow-visible { @apply overflow-visible; }
+.overflow-scroll { @apply overflow-scroll; }
+.overflow-x-auto { @apply overflow-x-auto; }
+.overflow-y-auto { @apply overflow-y-auto; }
+
+/* Cursor utilities */
+.cursor-auto { @apply cursor-auto; }
+.cursor-default { @apply cursor-default; }
+.cursor-pointer { @apply cursor-pointer; }
+.cursor-wait { @apply cursor-wait; }
+.cursor-text { @apply cursor-text; }
+.cursor-move { @apply cursor-move; }
+.cursor-help { @apply cursor-help; }
+.cursor-not-allowed { @apply cursor-not-allowed; }
+
+/* User select utilities */
+.select-none { @apply select-none; }
+.select-text { @apply select-text; }
+.select-all { @apply select-all; }
+.select-auto { @apply select-auto; }
+
+/* Pointer events utilities */
+.pointer-events-none { @apply pointer-events-none; }
+.pointer-events-auto { @apply pointer-events-auto; }
+
+/* Resize utilities */
+.resize-none { @apply resize-none; }
+.resize-y { @apply resize-y; }
+.resize-x { @apply resize-x; }
+.resize { @apply resize; }
+
+/* ==========================================================================
+   Component-Specific Utilities
+   ========================================================================== */
+
+/* Button size utilities */
+.btn-xs { @apply h-7 px-2 text-xs; }
+.btn-sm { @apply h-9 px-3; }
+.btn-md { @apply h-10 py-2 px-4; }
+.btn-lg { @apply h-11 px-8; }
+.btn-xl { @apply h-12 px-10 text-lg; }
+
+/* Input size utilities */
+.input-xs { @apply h-7 px-2 text-xs; }
+.input-sm { @apply h-8 px-3 text-sm; }
+.input-md { @apply h-10 px-3; }
+.input-lg { @apply h-11 px-4 text-base; }
+.input-xl { @apply h-12 px-4 text-lg; }
+
+/* Card size utilities */
+.card-sm { @apply p-4; }
+.card-md { @apply p-6; }
+.card-lg { @apply p-8; }
+.card-xl { @apply p-10; }
+
+/* Badge size utilities */
+.badge-xs { @apply px-1.5 py-0.5 text-xs; }
+.badge-sm { @apply px-2 py-0.5 text-xs; }
+.badge-md { @apply px-2.5 py-0.5 text-xs; }
+.badge-lg { @apply px-3 py-1 text-sm; }
+.badge-xl { @apply px-4 py-1.5 text-base; }
+
+/* ==========================================================================
+   Responsive Utilities
+   ========================================================================== */
+
+/* Mobile-first responsive utilities */
+.sm\:hidden { @apply sm:hidden; }
+.md\:hidden { @apply md:hidden; }
+.lg\:hidden { @apply lg:hidden; }
+.xl\:hidden { @apply xl:hidden; }
+.2xl\:hidden { @apply 2xl:hidden; }
+
+.sm\:block { @apply sm:block; }
+.md\:block { @apply md:block; }
+.lg\:block { @apply lg:block; }
+.xl\:block { @apply xl:block; }
+.2xl\:block { @apply 2xl:block; }
+
+.sm\:flex { @apply sm:flex; }
+.md\:flex { @apply md:flex; }
+.lg\:flex { @apply lg:flex; }
+.xl\:flex { @apply xl:flex; }
+.2xl\:flex { @apply 2xl:flex; }
+
+/* ==========================================================================
+   Print Utilities
+   ========================================================================== */
+
+@media print {
+  .print\:hidden { @apply hidden; }
+  .print\:block { @apply block; }
+  .print\:text-black { @apply text-black; }
+  .print\:bg-white { @apply bg-white; }
+}

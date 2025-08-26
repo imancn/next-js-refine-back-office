@@ -1,0 +1,243 @@
+/* ==========================================================================
+   Theme Utilities
+   ========================================================================== */
+
+/* Theme switching utilities */
+.theme-switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+}
+
+.theme-switch-light {
+  @apply bg-input;
+}
+
+.theme-switch-dark {
+  @apply bg-primary;
+}
+
+.theme-switch-thumb {
+  @apply pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform;
+}
+
+.theme-switch-thumb-light {
+  @apply translate-x-0;
+}
+
+.theme-switch-thumb-dark {
+  @apply translate-x-5;
+}
+
+/* Color scheme utilities */
+.color-scheme-auto {
+  color-scheme: light dark;
+}
+
+.color-scheme-light {
+  color-scheme: light;
+}
+
+.color-scheme-dark {
+  color-scheme: dark;
+}
+
+/* Theme-aware color utilities */
+.theme-text-primary {
+  @apply text-foreground;
+}
+
+.theme-text-secondary {
+  @apply text-muted-foreground;
+}
+
+.theme-text-muted {
+  @apply text-muted-foreground;
+}
+
+.theme-bg-primary {
+  @apply bg-background;
+}
+
+.theme-bg-secondary {
+  @apply bg-card;
+}
+
+.theme-bg-muted {
+  @apply bg-muted;
+}
+
+.theme-border-primary {
+  @apply border-border;
+}
+
+.theme-border-secondary {
+  @apply border-card-border;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border: #000000;
+    --input: #000000;
+    --ring: #000000;
+    --background: #ffffff;
+    --foreground: #000000;
+    --primary: #000000;
+    --primary-foreground: #ffffff;
+    --secondary: #f1f5f9;
+    --secondary-foreground: #000000;
+    --destructive: #000000;
+    --destructive-foreground: #ffffff;
+    --muted: #f1f5f9;
+    --muted-foreground: #000000;
+    --accent: #f1f5f9;
+    --accent-foreground: #000000;
+    --popover: #ffffff;
+    --popover-foreground: #000000;
+    --card: #ffffff;
+    --card-foreground: #000000;
+    --card-border: #000000;
+  }
+  
+  .dark {
+    --border: #ffffff;
+    --input: #ffffff;
+    --ring: #ffffff;
+    --background: #000000;
+    --foreground: #ffffff;
+    --primary: #ffffff;
+    --primary-foreground: #000000;
+    --secondary: #1f2937;
+    --secondary-foreground: #ffffff;
+    --destructive: #ffffff;
+    --destructive-foreground: #000000;
+    --muted: #1f2937;
+    --muted-foreground: #ffffff;
+    --accent: #1f2937;
+    --accent-foreground: #ffffff;
+    --popover: #000000;
+    --popover-foreground: #ffffff;
+    --card: #000000;
+    --card-foreground: #ffffff;
+    --card-border: #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-scale-in {
+    animation: none !important;
+  }
+  
+  .btn-hover-effect:hover,
+  .card-hover-effect:hover {
+    transform: none !important;
+  }
+}
+
+/* Dark mode media query fallback */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --card-background: #1f2937;
+    --card-border: #374151;
+    --secondary: #1f2937;
+    --secondary-foreground: #f9fafb;
+    --accent: #374151;
+    --accent-foreground: #f9fafb;
+    --muted: #374151;
+    --muted-foreground: #9ca3af;
+    --border: #374151;
+    --input: #374151;
+    --popover: #1f2937;
+    --popover-foreground: #f9fafb;
+  }
+}
+
+/* Light mode media query fallback */
+@media (prefers-color-scheme: light) {
+  :root:not(.dark) {
+    --background: #ffffff;
+    --foreground: #171717;
+    --card-background: #ffffff;
+    --card-border: #e5e7eb;
+    --secondary: #f8fafc;
+    --secondary-foreground: #0f172a;
+    --accent: #f1f5f9;
+    --accent-foreground: #0f172a;
+    --muted: #f8fafc;
+    --muted-foreground: #64748b;
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+  }
+}
+
+/* Theme transition utilities */
+.theme-transition {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.theme-transition-colors {
+  @apply transition-colors duration-300 ease-in-out;
+}
+
+.theme-transition-transform {
+  @apply transition-transform duration-300 ease-in-out;
+}
+
+/* Theme indicator utilities */
+.theme-indicator {
+  @apply inline-flex items-center justify-center rounded-full w-6 h-6 text-xs font-medium;
+}
+
+.theme-indicator-light {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.theme-indicator-dark {
+  @apply bg-slate-800 text-slate-200;
+}
+
+.theme-indicator-auto {
+  @apply bg-gray-100 text-gray-800;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium;
+  @apply transition-colors focus-visible:outline-none focus-visible:ring-2;
+  @apply focus-visible:ring-ring focus-visible:ring-offset-2;
+  @apply disabled:pointer-events-none disabled:opacity-50;
+  @apply h-10 w-10 hover:bg-accent hover:text-accent-foreground;
+}
+
+/* Theme-aware icons */
+.theme-icon {
+  @apply h-4 w-4;
+}
+
+.theme-icon-light {
+  @apply text-yellow-600;
+}
+
+.theme-icon-dark {
+  @apply text-slate-400;
+}
+
+.theme-icon-auto {
+  @apply text-gray-600;
+}

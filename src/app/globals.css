@@ -1,63 +1,120 @@
 @import "tailwindcss";
+@import "../styles/index.css";
+
+/* ==========================================================================
+   CSS Variables & Design Tokens
+   ========================================================================== */
 
 :root {
+  /* Base colors */
   --background: #ffffff;
   --foreground: #171717;
   
-  /* Primary color variables - will be set by JavaScript */
+  /* Primary color palette */
   --primary-color: #3b82f6;
   --primary-rgb: 59, 130, 246;
   --primary-light: #93c5fd;
   --primary-dark: #1e40af;
+  --primary-foreground: #ffffff;
   
-  /* Theme-specific variables */
+  /* Secondary colors */
+  --secondary: #f8fafc;
+  --secondary-foreground: #0f172a;
+  
+  /* Accent colors */
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  
+  /* Muted colors */
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  
+  /* Destructive colors */
+  --destructive: #ef4444;
+  --destructive-foreground: #fefefe;
+  
+  /* Card colors */
   --card-background: #ffffff;
-  --card-border: #e5e7eb;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
+  --card-foreground: #0f172a;
+  --card-border: #e2e8f0;
   
-  /* Spacing and layout variables */
+  /* Border and input colors */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #3b82f6;
+  
+  /* Popover colors */
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  
+  /* Layout dimensions */
   --sidebar-width: 250px;
   --sidebar-width-narrow: 200px;
   --sidebar-width-wide: 300px;
   
-  /* Animation variables */
+  /* Spacing scale */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Typography */
+  --font-size-small: 14px;
+  --font-size-medium: 16px;
+  --font-size-large: 18px;
+  
+  /* Transitions */
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 250ms ease-in-out;
   --transition-slow: 350ms ease-in-out;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ==========================================================================
+   Theme Variants
+   ========================================================================== */
 
-/* Dark theme variables */
+/* Dark theme */
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
   --card-background: #1f2937;
   --card-border: #374151;
-  --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
-  --text-muted: #9ca3af;
+  --secondary: #1f2937;
+  --secondary-foreground: #f9fafb;
+  --accent: #374151;
+  --accent-foreground: #f9fafb;
+  --muted: #374151;
+  --muted-foreground: #9ca3af;
+  --border: #374151;
+  --input: #374151;
+  --popover: #1f2937;
+  --popover-foreground: #f9fafb;
 }
 
-/* Light theme variables */
+/* Light theme */
 .light {
   --background: #ffffff;
   --foreground: #171717;
   --card-background: #ffffff;
   --card-border: #e5e7eb;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
+  --secondary: #f8fafc;
+  --secondary-foreground: #0f172a;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
 }
 
-/* Compact mode spacing */
+/* ==========================================================================
+   Spacing Modes
+   ========================================================================== */
+
+/* Compact mode */
 .compact-mode {
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -66,7 +123,7 @@
   --spacing-xl: 1.25rem;
 }
 
-/* Normal mode spacing */
+/* Normal mode (default) */
 :root {
   --spacing-xs: 0.5rem;
   --spacing-sm: 0.75rem;
@@ -75,7 +132,7 @@
   --spacing-xl: 2rem;
 }
 
-/* Spacious mode spacing */
+/* Spacious mode */
 .spacious-mode {
   --spacing-xs: 0.75rem;
   --spacing-sm: 1rem;
@@ -84,29 +141,41 @@
   --spacing-xl: 2.5rem;
 }
 
-/* Font size variables */
-:root {
-  --font-size-small: 14px;
-  --font-size-medium: 16px;
-  --font-size-large: 18px;
+/* ==========================================================================
+   Tailwind Theme Integration
+   ========================================================================== */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary-color);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-card: var(--card-background);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-border: var(--card-border);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
-/* Utility classes for theme-aware styling */
-.theme-aware {
-  background-color: var(--card-background);
-  border-color: var(--card-border);
-  color: var(--text-primary);
-}
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
 
-.theme-aware-secondary {
-  color: var(--text-secondary);
-}
-
-.theme-aware-muted {
-  color: var(--text-muted);
-}
-
-/* Smooth transitions for theme changes */
+/* Global transitions */
 * {
   transition: background-color var(--transition-normal), 
               border-color var(--transition-normal), 
@@ -118,15 +187,21 @@
   transition: none !important;
 }
 
+/* Base body styles */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   font-size: var(--font-size-medium);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar styling */
+/* ==========================================================================
+   Custom Scrollbar
+   ========================================================================== */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -137,13 +212,17 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
+  background: var(--muted-foreground);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--foreground);
 }
+
+/* ==========================================================================
+   Focus & Accessibility
+   ========================================================================== */
 
 /* Focus styles */
 *:focus {
@@ -151,37 +230,17 @@ body {
   outline-offset: 2px;
 }
 
-/* Button hover effects */
-.btn-hover-effect {
-  transition: transform var(--transition-fast), 
-              box-shadow var(--transition-fast);
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
-.btn-hover-effect:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.15);
-}
+/* ==========================================================================
+   Animations
+   ========================================================================== */
 
-/* Card hover effects */
-.card-hover-effect {
-  transition: transform var(--transition-normal), 
-              box-shadow var(--transition-normal);
-}
-
-.card-hover-effect:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-/* Animation utilities */
-.animate-fade-in {
-  animation: fadeIn var(--transition-normal) ease-out;
-}
-
-.animate-slide-up {
-  animation: slideUp var(--transition-normal) ease-out;
-}
-
+/* Keyframe definitions */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -199,5 +258,38 @@ body {
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .no-print {
+    display: none !important;
   }
 }

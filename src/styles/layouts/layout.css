@@ -1,0 +1,278 @@
+/* ==========================================================================
+   Layout Styles
+   ========================================================================== */
+
+/* Main layout container */
+.layout {
+  @apply min-h-screen bg-background;
+}
+
+/* Dashboard layout */
+.dashboard-layout {
+  @apply flex min-h-screen bg-background;
+}
+
+.dashboard-sidebar {
+  @apply fixed left-0 top-0 z-40 h-screen w-sidebar border-r bg-card;
+  @apply transition-transform duration-300 ease-in-out;
+}
+
+.dashboard-main {
+  @apply flex-1 ml-sidebar transition-all duration-300;
+}
+
+.dashboard-main-no-sidebar {
+  @apply ml-0;
+}
+
+.dashboard-content {
+  @apply p-6;
+}
+
+/* Sidebar navigation */
+.sidebar-nav {
+  @apply flex flex-col h-full;
+}
+
+.sidebar-header {
+  @apply flex h-16 items-center border-b px-4;
+}
+
+.sidebar-content {
+  @apply flex-1 overflow-y-auto py-4;
+}
+
+.sidebar-footer {
+  @apply border-t p-4;
+}
+
+.sidebar-item {
+  @apply flex items-center px-4 py-2 text-sm font-medium text-muted-foreground;
+  @apply transition-colors hover:bg-accent hover:text-accent-foreground;
+}
+
+.sidebar-item-active {
+  @apply bg-accent text-accent-foreground;
+}
+
+.sidebar-group {
+  @apply space-y-1;
+}
+
+.sidebar-group-title {
+  @apply px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider;
+}
+
+/* Header layout */
+.header-layout {
+  @apply sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur;
+  @apply supports-[backdrop-filter]:bg-background/60;
+}
+
+.header-container {
+  @apply flex h-16 items-center justify-between px-4;
+}
+
+.header-left {
+  @apply flex items-center space-x-4;
+}
+
+.header-center {
+  @apply flex-1 flex items-center justify-center;
+}
+
+.header-right {
+  @apply flex items-center space-x-4;
+}
+
+/* Content layouts */
+.content-layout {
+  @apply container mx-auto px-4 py-6 sm:px-6 lg:px-8;
+}
+
+.content-header {
+  @apply mb-8;
+}
+
+.content-title {
+  @apply text-3xl font-bold tracking-tight;
+}
+
+.content-description {
+  @apply text-muted-foreground mt-2;
+}
+
+.content-body {
+  @apply space-y-6;
+}
+
+/* Grid layouts */
+.grid-layout {
+  @apply grid gap-6;
+}
+
+.grid-layout-1 {
+  @apply grid-cols-1;
+}
+
+.grid-layout-2 {
+  @apply grid-cols-1 sm:grid-cols-2;
+}
+
+.grid-layout-3 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.grid-layout-4 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+}
+
+.grid-layout-responsive {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5;
+}
+
+/* Flex layouts */
+.flex-layout {
+  @apply flex;
+}
+
+.flex-layout-center {
+  @apply items-center justify-center;
+}
+
+.flex-layout-between {
+  @apply items-center justify-between;
+}
+
+.flex-layout-start {
+  @apply items-center justify-start;
+}
+
+.flex-layout-end {
+  @apply items-center justify-end;
+}
+
+.flex-layout-col {
+  @apply flex-col;
+}
+
+.flex-layout-row {
+  @apply flex-row;
+}
+
+/* Card layouts */
+.card-layout {
+  @apply rounded-lg border bg-card text-card-foreground shadow-sm;
+}
+
+.card-layout-header {
+  @apply flex flex-col space-y-1.5 p-6;
+}
+
+.card-layout-title {
+  @apply text-2xl font-semibold leading-none tracking-tight;
+}
+
+.card-layout-description {
+  @apply text-sm text-muted-foreground;
+}
+
+.card-layout-content {
+  @apply p-6 pt-0;
+}
+
+.card-layout-footer {
+  @apply flex items-center p-6 pt-0;
+}
+
+/* Form layouts */
+.form-layout {
+  @apply space-y-6;
+}
+
+.form-layout-horizontal {
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2;
+}
+
+.form-layout-compact {
+  @apply space-y-4;
+}
+
+.form-layout-group {
+  @apply space-y-2;
+}
+
+.form-layout-row {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+}
+
+/* Modal layouts */
+.modal-layout {
+  @apply fixed inset-0 z-50 flex items-center justify-center;
+}
+
+.modal-layout-overlay {
+  @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-sm;
+}
+
+.modal-layout-content {
+  @apply relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg;
+  @apply duration-200;
+}
+
+.modal-layout-header {
+  @apply flex flex-col space-y-1.5 text-center sm:text-left;
+}
+
+.modal-layout-title {
+  @apply text-lg font-semibold leading-none tracking-tight;
+}
+
+.modal-layout-description {
+  @apply text-sm text-muted-foreground;
+}
+
+.modal-layout-body {
+  @apply py-4;
+}
+
+.modal-layout-footer {
+  @apply flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 640px) {
+  .dashboard-main {
+    @apply ml-0;
+  }
+  
+  .dashboard-sidebar {
+    @apply -translate-x-full;
+  }
+  
+  .sidebar-open {
+    @apply translate-x-0;
+  }
+}
+
+@media (min-width: 641px) {
+  .dashboard-sidebar {
+    @apply translate-x-0;
+  }
+}
+
+/* Print layout adjustments */
+@media print {
+  .dashboard-sidebar,
+  .header-layout {
+    @apply hidden;
+  }
+  
+  .dashboard-main {
+    @apply ml-0;
+  }
+  
+  .content-layout {
+    @apply px-0 py-0;
+  }
+}
