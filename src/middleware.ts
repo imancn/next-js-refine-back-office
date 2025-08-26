@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   // Check if route requires authentication
   const requiresAuth = Object.keys(protectedRoutes).some(route => 
     pathname.startsWith(route)
-  ) || (!pathname.startsWith('/api/') && pathname !== '/');
+  ) || (!pathname.startsWith('/api/') && pathname !== '/' && pathname !== '');
 
   if (!requiresAuth) {
     return NextResponse.next();
@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refresh_token')?.value;
 
   if (!accessToken) {
-    // No access token, redirect to login
+    // No access token, handle based on route type
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -53,8 +53,9 @@ export async function middleware(request: NextRequest) {
       );
     }
     
-    // For non-API routes, redirect to login page
-    return NextResponse.redirect(new URL('/auth/login', request.url));
+    // For non-API routes, allow the request to proceed
+    // The client-side AuthGuard will handle showing the auth modal
+    return NextResponse.next();
   }
 
   try {
@@ -81,8 +82,9 @@ export async function middleware(request: NextRequest) {
         );
       }
       
-      // Redirect to unauthorized page
-      return NextResponse.redirect(new URL('/auth/unauthorized', request.url));
+      // For non-API routes, allow the request to proceed
+      // The client-side AuthGuard will handle showing the auth modal
+      return NextResponse.next();
     }
 
     // Check general route access
@@ -94,7 +96,9 @@ export async function middleware(request: NextRequest) {
         );
       }
       
-      return NextResponse.redirect(new URL('/auth/unauthorized', request.url));
+      // For non-API routes, allow the request to proceed
+      // The client-side AuthGuard will handle showing the auth modal
+      return NextResponse.next();
     }
 
     // Add user info to headers for API routes

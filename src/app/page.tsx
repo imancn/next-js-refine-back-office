@@ -14,7 +14,6 @@ import {
   BarChart3,
   FileText
 } from 'lucide-react';
-import { AuthDemo } from './components/AuthDemo';
 
 // Mock data for demonstration
 const stats = [
@@ -70,11 +69,6 @@ const quickActions = [
 export default function Dashboard() {
   return (
     <div className="space-y-6">
-      {/* Authentication Demo */}
-      <div className="mb-8">
-        <AuthDemo />
-      </div>
-
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
