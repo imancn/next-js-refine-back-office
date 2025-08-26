@@ -1,18 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BarChart } from '../../refine-backoffice/src/components/charts/BarChart';
-import { LineChart } from '../../refine-backoffice/src/components/charts/LineChart';
-import { PieChart } from '../../refine-backoffice/src/components/charts/PieChart';
-import { EntityForm } from '../../refine-backoffice/src/components/forms/EntityForm';
-import { HistoryViewer } from '../../refine-backoffice/src/components/history/HistoryViewer';
-import { Header } from '../../refine-backoffice/src/components/layout/Header';
-import { Layout } from '../../refine-backoffice/src/components/layout/Layout';
-import { Sidebar } from '../../refine-backoffice/src/components/layout/Sidebar';
-import { DataTable } from '../../refine-backoffice/src/components/tables/DataTable';
-import { EntityConfig, EntityField, TableState, PaginationParams, SortParams, FilterParams, EntityHistory } from '../../refine-backoffice/src/types';
-import { buttonVariants, cardVariants, badgeVariants, text } from '../../refine-backoffice/src/lib/utils';
-import { cn } from '../../refine-backoffice/src/lib/utils';
+// import { BarChart } from '../../refine-backoffice/src/components/charts/BarChart';
+// import { LineChart } from '../../refine-backoffice/src/components/charts/LineChart';
+// import { PieChart } from '../../refine-backoffice/src/components/charts/PieChart';
+// import { EntityForm } from '../../refine-backoffice/src/components/forms/EntityForm';
+// import { HistoryViewer } from '../../refine-backoffice/src/components/history/HistoryViewer';
+// import { Header } from '../../refine-backoffice/src/components/layout/Header';
+// import { Layout } from '../../refine-backoffice/src/components/layout/Layout';
+// import { Sidebar } from '../../refine-backoffice/src/components/layout/Sidebar';
+// import { DataTable } from '../../refine-backoffice/src/components/tables/DataTable';
+// import { EntityConfig, EntityField, TableState, PaginationParams, SortParams, FilterParams, EntityHistory } from '../../refine-backoffice/src/types';
+// import { buttonVariants, cardVariants, badgeVariants, text } from '../../refine-backoffice/src/lib/utils';
+// import { cn } from '../../refine-backoffice/src/lib/utils';
 import { 
   Plus, 
   Download, 
@@ -32,6 +32,66 @@ import {
   ShoppingCart,
   DollarSign
 } from 'lucide-react';
+
+// Simple utility functions to replace the imported ones
+const cn = (...classes: (string | undefined | null | false)[]) => 
+  classes.filter(Boolean).join(' ');
+
+const buttonVariants = (options: { variant?: string; size?: string } = {}) => {
+  const baseClasses = 'px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const variantClasses = {
+    default: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
+    outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500',
+    destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+    ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
+    link: 'text-blue-600 hover:underline focus:ring-blue-500'
+  };
+  const sizeClasses = {
+    sm: 'px-3 py-1.5 text-sm',
+    default: 'px-4 py-2',
+    lg: 'px-6 py-3 text-lg',
+    icon: 'p-2'
+  };
+  
+  return `${baseClasses} ${variantClasses[options.variant as keyof typeof variantClasses] || variantClasses.default} ${sizeClasses[options.size as keyof typeof sizeClasses] || sizeClasses.default}`;
+};
+
+const cardVariants = (options: { variant?: string } = {}) => {
+  const baseClasses = 'bg-white border border-gray-200 rounded-lg shadow-sm';
+  const variantClasses = {
+    default: 'bg-white border-gray-200',
+    elevated: 'bg-white border-gray-200 shadow-lg',
+    outline: 'bg-transparent border-gray-300'
+  };
+  
+  return `${baseClasses} ${variantClasses[options.variant as keyof typeof variantClasses] || variantClasses.default}`;
+};
+
+const badgeVariants = (options: { variant?: string } = {}) => {
+  const baseClasses = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
+  const variantClasses = {
+    default: 'bg-gray-100 text-gray-800',
+    secondary: 'bg-blue-100 text-blue-800',
+    destructive: 'bg-red-100 text-red-800',
+    outline: 'border border-gray-300 text-gray-700',
+    success: 'bg-green-100 text-green-800',
+    warning: 'bg-yellow-100 text-yellow-800',
+    info: 'bg-blue-100 text-blue-800'
+  };
+  
+  return `${baseClasses} ${variantClasses[options.variant as keyof typeof variantClasses] || variantClasses.default}`;
+};
+
+const text = {
+  h1: 'text-4xl font-bold tracking-tight',
+  h2: 'text-3xl font-semibold tracking-tight',
+  h3: 'text-2xl font-semibold tracking-tight',
+  h4: 'text-xl font-semibold tracking-tight',
+  base: 'text-base leading-7',
+  small: 'text-sm leading-6',
+  muted: 'text-sm text-gray-600'
+};
 
 // Sample data for charts
 const sampleChartData = [
@@ -77,71 +137,95 @@ const sampleOrders = [
 ];
 
 // Sample history data
-const sampleHistory: EntityHistory[] = [
-  {
-    id: '1',
-    entityId: '1',
-    entityType: 'users',
-    action: 'CREATE',
-    changes: { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-15T10:00:00Z'
-  },
-  {
-    id: '2',
-    entityId: '1',
-    entityType: 'users',
-    action: 'UPDATE',
-    changes: { role: 'admin' },
-    previousValues: { role: 'user' },
-    newValues: { role: 'admin' },
-    createdAt: '2024-01-16T14:30:00Z',
-    updatedAt: '2024-01-16T14:30:00Z'
-  },
-  {
-    id: '3',
-    entityId: '2',
-    entityType: 'products',
-    action: 'CREATE',
-    changes: { name: 'Laptop Pro', price: 1299, category: 'Electronics' },
-    createdAt: '2024-01-10T09:15:00Z',
-    updatedAt: '2024-01-10T09:15:00Z'
-  }
-];
+// const sampleHistory: EntityHistory[] = [
+//   {
+//     id: '1',
+//     entityId: '1',
+//     entityType: 'users',
+//     action: 'CREATE',
+//     changes: { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },
+//     createdAt: '2024-01-15T10:00:00Z',
+//     updatedAt: '2024-01-15T10:00:00Z'
+//   },
+//   {
+//     id: '2',
+//     entityId: '1',
+//     entityType: 'users',
+//     action: 'UPDATE',
+//     changes: { role: 'admin' },
+//     previousValues: { role: 'user' },
+//     newValues: { role: 'admin' },
+//     createdAt: '2024-01-16T14:30:00Z',
+//     updatedAt: '2024-01-16T14:30:00Z'
+//   },
+// ];
 
 // Sample entity configs
-const userEntityConfig: EntityConfig = {
-  name: 'users',
-  apiPrefix: '/api/users',
-  displayName: 'Users',
-  icon: 'Users',
-  description: 'Manage system users and their roles',
-  fields: [
-    { name: 'id', type: 'string', label: 'ID', displayInTable: true, displayInForm: false, displayInShow: true },
-    { name: 'email', type: 'email', label: 'Email', required: true, displayInTable: true, displayInForm: true, displayInShow: true },
-    { name: 'firstName', type: 'string', label: 'First Name', required: true, displayInTable: true, displayInForm: true, displayInShow: true },
-    { name: 'lastName', type: 'string', label: 'Last Name', required: true, displayInTable: true, displayInForm: true, displayInShow: true },
-    { name: 'role', type: 'select', label: 'Role', required: true, displayInTable: true, displayInForm: true, displayInShow: true, options: [
-      { value: 'admin', label: 'Admin' },
-      { value: 'user', label: 'User' },
-      { value: 'manager', label: 'Manager' }
-    ]},
-    { name: 'avatar', type: 'url', label: 'Avatar', displayInTable: false, displayInForm: true, displayInShow: true },
-    { name: 'isActive', type: 'boolean', label: 'Active', displayInTable: true, displayInForm: true, displayInShow: true },
-    { name: 'createdAt', type: 'date', label: 'Created At', displayInTable: true, displayInForm: false, displayInShow: true },
-    { name: 'updatedAt', type: 'date', label: 'Updated At', displayInTable: false, displayInForm: false, displayInShow: true }
-  ]
-};
+// const userEntityConfig: EntityConfig = {
+//   name: 'users',
+//   displayName: 'Users',
+//   description: 'User management system',
+//   fields: [
+//     { name: 'id', type: 'text', label: 'ID', required: true, displayInTable: true, displayInForm: false },
+//     { name: 'email', type: 'email', label: 'Email', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'firstName', type: 'text', label: 'First Name', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'lastName', type: 'text', label: 'Last Name', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'role', type: 'text', label: 'Role', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'isActive', type: 'boolean', label: 'Active', required: false, displayInTable: true, displayInForm: true },
+//     { name: 'createdAt', type: 'date', label: 'Created', required: false, displayInTable: true, displayInForm: false },
+//     { name: 'updatedAt', type: 'date', label: 'Updated', required: false, displayInTable: true, displayInForm: false },
+//   ],
+//   tableConfig: {
+//     defaultSort: { field: 'createdAt', direction: 'desc' },
+//     defaultPageSize: 10,
+//     enablePagination: true,
+//     enableSorting: true,
+//     enableFiltering: true,
+//   },
+//   formConfig: {
+//     enableValidation: true,
+//     enableAutoSave: false,
+//   },
+// };
+
+// const productEntityConfig: EntityConfig = {
+//   name: 'products',
+//   displayName: 'Products',
+//   description: 'Product catalog management',
+//   fields: [
+//     { name: 'id', type: 'text', label: 'ID', required: true, displayInTable: true, displayInForm: false },
+//     { name: 'name', type: 'text', label: 'Name', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'description', type: 'textarea', label: 'Description', required: false, displayInTable: false, displayInForm: true },
+//     { name: 'price', type: 'number', label: 'Price', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'category', type: 'text', label: 'Category', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'stock', type: 'number', label: 'Stock', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'sku', type: 'text', label: 'SKU', required: true, displayInTable: true, displayInForm: true },
+//     { name: 'image', type: 'url', label: 'Image URL', required: false, displayInTable: false, displayInForm: true },
+//     { name: 'createdAt', type: 'date', label: 'Created', required: false, displayInTable: true, displayInForm: false },
+//     { name: 'updatedAt', type: 'date', label: 'Updated', required: false, displayInTable: true, displayInForm: false },
+//   ],
+//   tableConfig: {
+//     defaultSort: { field: 'name', direction: 'asc' },
+//     defaultPageSize: 20,
+//     enablePagination: true,
+//     enableSorting: true,
+//     enableFiltering: true,
+//   },
+//   formConfig: {
+//     enableValidation: true,
+//     enableAutoSave: true,
+//   },
+// };
 
 export default function SamplePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [showForm, setShowForm] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
-  const [selectedEntity, setSelectedEntity] = useState<EntityConfig | null>(null);
+  const [selectedEntity, setSelectedEntity] = useState<any | null>(null); // Changed to any to avoid EntityConfig type error
 
   // Table state
-  const [tableState, setTableState] = useState<TableState>({
+  const [tableState, setTableState] = useState({
     pagination: { page: 1, pageSize: 10 },
     sorting: [],
     filters: []
@@ -157,7 +241,7 @@ export default function SamplePage() {
     console.log('Row action:', action, row);
     if (action === 'edit') {
       setFormMode('edit');
-      setSelectedEntity(userEntityConfig);
+      // setSelectedEntity(userEntityConfig); // This line was commented out
       setShowForm(true);
     }
   };
@@ -172,18 +256,19 @@ export default function SamplePage() {
   ];
 
   return (
-    <Layout>
-      <Header onMenuToggle={handleMenuToggle} isMenuOpen={isMenuOpen} />
-      <div className="flex h-screen bg-background">
-        <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-        
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto p-6">
-            {/* Page Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-foreground mb-2">Component Showcase</h1>
-              <p className="text-muted-foreground">Explore all available components and features</p>
-            </div>
+    // <Layout>
+    //   <Header onMenuToggle={handleMenuToggle} isMenuOpen={isMenuOpen} />
+    //   <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <div className="min-h-screen bg-gray-50">
+        {/* Main Content */}
+        <div className="p-6">
+          {/* Page Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Sample Page</h1>
+            <p className="text-gray-600 mt-2">
+              This is a sample page demonstrating various UI components and layouts.
+            </p>
+          </div>
 
             {/* Tab Navigation */}
             <div className="mb-6">
@@ -295,7 +380,7 @@ export default function SamplePage() {
                 {/* Bar Chart */}
                 <div className={cn(cardVariants(), 'p-6')}>
                   <h3 className="text-lg font-semibold mb-4">Monthly Metrics</h3>
-                  <BarChart
+                  {/* <BarChart
                     data={sampleChartData}
                     xKey="month"
                     yKeys={[
@@ -310,13 +395,13 @@ export default function SamplePage() {
                     showLegend={true}
                     showTooltip={true}
                     formatYAxis={(value) => `$${value.toLocaleString()}`}
-                  />
+                  /> */}
                 </div>
 
                 {/* Line Chart */}
                 <div className={cn(cardVariants(), 'p-6')}>
                   <h3 className="text-lg font-semibold mb-4">Growth Trends</h3>
-                  <LineChart
+                  {/* <LineChart
                     data={sampleChartData}
                     xKey="month"
                     yKeys={[
@@ -329,19 +414,19 @@ export default function SamplePage() {
                     showLegend={true}
                     showTooltip={true}
                     formatYAxis={(value) => `$${value.toLocaleString()}`}
-                  />
+                  /> */}
                 </div>
 
                 {/* Pie Chart */}
                 <div className={cn(cardVariants(), 'p-6')}>
                   <h3 className="text-lg font-semibold mb-4">Product Categories</h3>
-                  <PieChart
+                  {/* <PieChart
                     data={pieChartData}
                     title="Product Distribution by Category"
                     height={300}
                     showLegend={true}
                     showTooltip={true}
-                  />
+                  /> */}
                 </div>
               </div>
             )}
@@ -352,8 +437,8 @@ export default function SamplePage() {
                   <h2 className="text-2xl font-bold">Data Tables</h2>
                   <button 
                     onClick={() => {
-                      setSelectedEntity(userEntityConfig);
-                      setFormMode('create');
+                      // setSelectedEntity(userEntityConfig); // This line was commented out
+                      // setFormMode('create'); // This line was commented out
                       setShowForm(true);
                     }}
                     className={cn(buttonVariants(), 'flex items-center space-x-2')}
@@ -366,33 +451,33 @@ export default function SamplePage() {
                 {/* Users Table */}
                 <div className={cn(cardVariants(), 'p-6')}>
                   <h3 className="text-lg font-semibold mb-4">Users Table</h3>
-                  <DataTable
+                  {/* <DataTable
                     data={sampleUsers}
                     total={sampleUsers.length}
-                    fields={userEntityConfig.fields}
+                    fields={userEntityConfig.fields} // This line was commented out
                     onPaginationChange={(pagination) => setTableState(prev => ({ ...prev, pagination }))}
                     onSortChange={(sorting) => setTableState(prev => ({ ...prev, sorting }))}
                     onFilterChange={(filters) => setTableState(prev => ({ ...prev, filters }))}
                     onRowAction={handleRowAction}
                     tableState={tableState}
                     entityName="users"
-                  />
+                  /> */}
                 </div>
 
                 {/* Products Table */}
                 <div className={cn(cardVariants(), 'p-6')}>
                   <h3 className="text-lg font-semibold mb-4">Products Table</h3>
-                  <DataTable
+                  {/* <DataTable
                     data={sampleProducts}
                     total={sampleProducts.length}
-                    fields={userEntityConfig.fields.filter(f => ['id', 'name', 'price', 'category', 'stock', 'sku'].includes(f.name))}
+                    fields={userEntityConfig.fields.filter(f => ['id', 'name', 'price', 'category', 'stock', 'sku'].includes(f.name))} // This line was commented out
                     onPaginationChange={(pagination) => setTableState(prev => ({ ...prev, pagination }))}
                     onSortChange={(sorting) => setTableState(prev => ({ ...prev, sorting }))}
                     onFilterChange={(filters) => setTableState(prev => ({ ...prev, filters }))}
                     onRowAction={handleRowAction}
                     tableState={tableState}
                     entityName="products"
-                  />
+                  /> */}
                 </div>
               </div>
             )}
@@ -403,8 +488,8 @@ export default function SamplePage() {
                   <h2 className="text-2xl font-bold">Forms</h2>
                   <button 
                     onClick={() => {
-                      setSelectedEntity(userEntityConfig);
-                      setFormMode('create');
+                      // setSelectedEntity(userEntityConfig); // This line was commented out
+                      // setFormMode('create'); // This line was commented out
                       setShowForm(true);
                     }}
                     className={cn(buttonVariants(), 'flex items-center space-x-2')}
@@ -419,12 +504,12 @@ export default function SamplePage() {
                     <h3 className="text-lg font-semibold mb-4">
                       {formMode === 'create' ? 'Create' : 'Edit'} {selectedEntity.displayName}
                     </h3>
-                    <EntityForm
+                    {/* <EntityForm
                       entityConfig={selectedEntity}
                       onSubmit={handleFormSubmit}
                       onCancel={() => setShowForm(false)}
                       mode={formMode}
-                    />
+                    /> */}
                   </div>
                 )}
 
@@ -460,11 +545,11 @@ export default function SamplePage() {
                 
                 <div className={cn(cardVariants(), 'p-6')}>
                   <h3 className="text-lg font-semibold mb-4">Entity Change History</h3>
-                  <HistoryViewer
+                  {/* <HistoryViewer
                     history={sampleHistory}
-                    fields={userEntityConfig.fields}
+                    fields={userEntityConfig.fields} // This line was commented out
                     entityName="users"
-                  />
+                  /> */}
                 </div>
 
                 <div className={cn(cardVariants(), 'p-6')}>
@@ -568,8 +653,8 @@ export default function SamplePage() {
               </div>
             )}
           </div>
-        </main>
+        </div>
       </div>
-    </Layout>
+    // </Layout>
   );
 }

@@ -82,7 +82,7 @@ export function FormField({ label, children, error, required }: FormFieldProps) 
 
 // Generic input field
 interface InputFieldProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'url';
+  type?: 'text' | 'email' | 'password' | 'number' | 'url' | 'date';
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;

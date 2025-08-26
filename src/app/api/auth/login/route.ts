@@ -72,7 +72,12 @@ export async function POST(request: NextRequest) {
         isValidCredentials = true;
         // Delete the used token
         await prisma.verificationToken.delete({
-          where: { id: verificationToken.id },
+          where: { 
+            identifier_token: {
+              identifier: verificationToken.identifier,
+              token: verificationToken.token
+            }
+          },
         });
       }
     } else if (password && user.password) {

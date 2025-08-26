@@ -76,6 +76,9 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
+  
+  // Relation back to User
+  user       User     @relation(fields: [identifier], references: [email], onDelete: Cascade)
 
   @@unique([identifier, token])
   @@map("verification_tokens")

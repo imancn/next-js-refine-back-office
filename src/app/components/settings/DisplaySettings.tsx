@@ -16,18 +16,18 @@ import {
 export const DisplaySettings: React.FC = () => {
   const { settings, updateDisplaySetting } = useSettings();
 
-  const dateFormatOptions = [
+  const dateFormatOptions: Array<{ value: 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD'; label: string; example: string }> = [
     { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY', example: '12/25/2024' },
     { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY', example: '25/12/2024' },
     { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD', example: '2024-12-25' },
   ];
 
-  const timeFormatOptions = [
+  const timeFormatOptions: Array<{ value: '12h' | '24h'; label: string; example: string }> = [
     { value: '12h', label: '12-hour (AM/PM)', example: '2:30 PM' },
     { value: '24h', label: '24-hour', example: '14:30' },
   ];
 
-  const numberFormatOptions = [
+  const numberFormatOptions: Array<{ value: 'comma' | 'dot' | 'space'; label: string; example: string }> = [
     { value: 'comma', label: 'Comma separator', example: '1,234.56' },
     { value: 'dot', label: 'Dot separator', example: '1.234,56' },
     { value: 'space', label: 'Space separator', example: '1 234.56' },

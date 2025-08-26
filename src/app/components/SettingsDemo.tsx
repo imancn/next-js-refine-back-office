@@ -64,7 +64,7 @@ export const SettingsDemo: React.FC = () => {
   };
 
   const getTableClasses = () => {
-    const baseClasses = 'w-full border-collapse';
+    let baseClasses = 'w-full border-collapse';
     
     if (settings.appearance.showGridLines) {
       baseClasses += ' border border-gray-300';
