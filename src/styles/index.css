@@ -69,96 +69,96 @@
 .border-lg { @apply border-8; }
 
 .rounded-xs { @apply rounded; }
-.rounded-sm { @apply rounded-sm; }
-.rounded-md { @apply rounded-md; }
-.rounded-lg { @apply rounded-lg; }
-.rounded-xl { @apply rounded-xl; }
-.rounded-full { @apply rounded-full; }
+.rounded-sm-custom { @apply rounded-sm; }
+.rounded-md-custom { @apply rounded-md; }
+.rounded-lg-custom { @apply rounded-lg; }
+.rounded-xl-custom { @apply rounded-xl; }
+.rounded-full-custom { @apply rounded-full; }
 
 /* Shadow utilities */
 .shadow-xs { @apply shadow-sm; }
-.shadow-sm { @apply shadow; }
-.shadow-md { @apply shadow-md; }
-.shadow-lg { @apply shadow-lg; }
-.shadow-xl { @apply shadow-xl; }
-.shadow-2xl { @apply shadow-2xl; }
+.shadow-sm-custom { @apply shadow; }
+.shadow-md-custom { @apply shadow-md; }
+.shadow-lg-custom { @apply shadow-lg; }
+.shadow-xl-custom { @apply shadow-xl; }
+.shadow-2xl-custom { @apply shadow-2xl; }
 
 /* Text utilities */
-.text-xs { @apply text-xs; }
-.text-sm { @apply text-sm; }
-.text-base { @apply text-base; }
-.text-lg { @apply text-lg; }
-.text-xl { @apply text-xl; }
-.text-2xl { @apply text-2xl; }
-.text-3xl { @apply text-3xl; }
-.text-4xl { @apply text-4xl; }
-.text-5xl { @apply text-5xl; }
+.text-xs-custom { @apply text-xs; }
+.text-sm-custom { @apply text-sm; }
+.text-base-custom { @apply text-base; }
+.text-lg-custom { @apply text-lg; }
+.text-xl-custom { @apply text-xl; }
+.text-2xl-custom { @apply text-2xl; }
+.text-3xl-custom { @apply text-3xl; }
+.text-4xl-custom { @apply text-4xl; }
+.text-5xl-custom { @apply text-5xl; }
 
-.font-light { @apply font-light; }
-.font-normal { @apply font-normal; }
-.font-medium { @apply font-medium; }
-.font-semibold { @apply font-semibold; }
-.font-bold { @apply font-bold; }
-.font-extrabold { @apply font-extrabold; }
+.font-light-custom { @apply font-light; }
+.font-normal-custom { @apply font-normal; }
+.font-medium-custom { @apply font-medium; }
+.font-semibold-custom { @apply font-semibold; }
+.font-bold-custom { @apply font-bold; }
+.font-extrabold-custom { @apply font-extrabold; }
 
 /* Display utilities */
-.block { @apply block; }
-.inline-block { @apply inline-block; }
-.inline { @apply inline; }
-.flex { @apply flex; }
-.inline-flex { @apply inline-flex; }
-.grid { @apply grid; }
-.inline-grid { @apply inline-grid; }
-.hidden { @apply hidden; }
+.block-custom { @apply block; }
+.inline-block-custom { @apply inline-block; }
+.inline-custom { @apply inline; }
+.flex-custom { @apply flex; }
+.inline-flex-custom { @apply inline-flex; }
+.grid-custom { @apply grid; }
+.inline-grid-custom { @apply inline-grid; }
+.hidden-custom { @apply hidden; }
 
 /* Position utilities */
-.static { @apply static; }
-.fixed { @apply fixed; }
-.absolute { @apply absolute; }
-.relative { @apply relative; }
-.sticky { @apply sticky; }
+.static-custom { @apply static; }
+.fixed-custom { @apply fixed; }
+.absolute-custom { @apply absolute; }
+.relative-custom { @apply relative; }
+.sticky-custom { @apply sticky; }
 
 /* Z-index utilities */
-.z-0 { @apply z-0; }
-.z-10 { @apply z-10; }
-.z-20 { @apply z-20; }
-.z-30 { @apply z-30; }
-.z-40 { @apply z-40; }
-.z-50 { @apply z-50; }
+.z-0-custom { @apply z-0; }
+.z-10-custom { @apply z-10; }
+.z-20-custom { @apply z-20; }
+.z-30-custom { @apply z-30; }
+.z-40-custom { @apply z-40; }
+.z-50-custom { @apply z-50; }
 
 /* Overflow utilities */
-.overflow-auto { @apply overflow-auto; }
-.overflow-hidden { @apply overflow-hidden; }
-.overflow-visible { @apply overflow-visible; }
-.overflow-scroll { @apply overflow-scroll; }
-.overflow-x-auto { @apply overflow-x-auto; }
-.overflow-y-auto { @apply overflow-y-auto; }
+.overflow-auto-custom { @apply overflow-auto; }
+.overflow-hidden-custom { @apply overflow-hidden; }
+.overflow-visible-custom { @apply overflow-visible; }
+.overflow-scroll-custom { @apply overflow-scroll; }
+.overflow-x-auto-custom { @apply overflow-x-auto; }
+.overflow-y-auto-custom { @apply overflow-y-auto; }
 
 /* Cursor utilities */
-.cursor-auto { @apply cursor-auto; }
-.cursor-default { @apply cursor-default; }
-.cursor-pointer { @apply cursor-pointer; }
-.cursor-wait { @apply cursor-wait; }
-.cursor-text { @apply cursor-text; }
-.cursor-move { @apply cursor-move; }
-.cursor-help { @apply cursor-help; }
-.cursor-not-allowed { @apply cursor-not-allowed; }
+.cursor-auto-custom { @apply cursor-auto; }
+.cursor-default-custom { @apply cursor-default; }
+.cursor-pointer-custom { @apply cursor-pointer; }
+.cursor-wait-custom { @apply cursor-wait; }
+.cursor-text-custom { @apply cursor-text; }
+.cursor-move-custom { @apply cursor-move; }
+.cursor-help-custom { @apply cursor-help; }
+.cursor-not-allowed-custom { @apply cursor-not-allowed; }
 
 /* User select utilities */
-.select-none { @apply select-none; }
-.select-text { @apply select-text; }
-.select-all { @apply select-all; }
-.select-auto { @apply select-auto; }
+.select-none-custom { @apply select-none; }
+.select-text-custom { @apply select-text; }
+.select-all-custom { @apply select-all; }
+.select-auto-custom { @apply select-auto; }
 
 /* Pointer events utilities */
-.pointer-events-none { @apply pointer-events-none; }
-.pointer-events-auto { @apply pointer-events-auto; }
+.pointer-events-none-custom { @apply pointer-events-none; }
+.pointer-events-auto-custom { @apply pointer-events-auto; }
 
 /* Resize utilities */
-.resize-none { @apply resize-none; }
-.resize-y { @apply resize-y; }
-.resize-x { @apply resize-x; }
-.resize { @apply resize; }
+.resize-none-custom { @apply resize-none; }
+.resize-y-custom { @apply resize-y; }
+.resize-x-custom { @apply resize-x; }
+.resize-custom { @apply resize; }
 
 /* ==========================================================================
    Component-Specific Utilities
@@ -196,31 +196,31 @@
    ========================================================================== */
 
 /* Mobile-first responsive utilities */
-.sm\:hidden { @apply sm:hidden; }
-.md\:hidden { @apply md:hidden; }
-.lg\:hidden { @apply lg:hidden; }
-.xl\:hidden { @apply xl:hidden; }
-.2xl\:hidden { @apply 2xl:hidden; }
+.sm\:hidden-custom { @apply sm:hidden; }
+.md\:hidden-custom { @apply md:hidden; }
+.lg\:hidden-custom { @apply lg:hidden; }
+.xl\:hidden-custom { @apply xl:hidden; }
+.xl2\:hidden-custom { @apply 2xl:hidden; }
 
-.sm\:block { @apply sm:block; }
-.md\:block { @apply md:block; }
-.lg\:block { @apply lg:block; }
-.xl\:block { @apply xl:block; }
-.2xl\:block { @apply 2xl:block; }
+.sm\:block-custom { @apply sm:block; }
+.md\:block-custom { @apply md:block; }
+.lg\:block-custom { @apply lg:block; }
+.xl\:block-custom { @apply xl:block; }
+.xl2\:block-custom { @apply 2xl:block; }
 
-.sm\:flex { @apply sm:flex; }
-.md\:flex { @apply md:flex; }
-.lg\:flex { @apply lg:flex; }
-.xl\:flex { @apply xl:flex; }
-.2xl\:flex { @apply 2xl:flex; }
+.sm\:flex-custom { @apply sm:flex; }
+.md\:flex-custom { @apply md:flex; }
+.lg\:flex-custom { @apply lg:flex; }
+.xl\:flex-custom { @apply xl:flex; }
+.xl2\:flex-custom { @apply 2xl:flex; }
 
 /* ==========================================================================
    Print Utilities
    ========================================================================== */
 
 @media print {
-  .print\:hidden { @apply hidden; }
-  .print\:block { @apply block; }
-  .print\:text-black { @apply text-black; }
-  .print\:bg-white { @apply bg-white; }
+  .print\:hidden-custom { @apply hidden; }
+  .print\:block-custom { @apply block; }
+  .print\:text-black-custom { @apply text-black; }
+  .print\:bg-white-custom { @apply bg-white; }
 }

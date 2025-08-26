@@ -65,8 +65,8 @@
 
 /* Header layout */
 .header-layout {
-  @apply sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur;
-  @apply supports-[backdrop-filter]:bg-background/60;
+  @apply sticky top-0 z-40 w-full border-b bg-background bg-opacity-95 backdrop-blur;
+  @apply supports-[backdrop-filter]:bg-background supports-[backdrop-filter]:bg-opacity-60;
 }
 
 .header-container {
@@ -212,7 +212,7 @@
 }
 
 .modal-layout-overlay {
-  @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-sm;
+  @apply fixed inset-0 z-50 bg-background bg-opacity-80 backdrop-blur-sm;
 }
 
 .modal-layout-content {

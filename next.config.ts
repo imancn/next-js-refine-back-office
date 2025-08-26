@@ -17,6 +17,18 @@ const nextConfig: NextConfig = {
       'node_modules/@esbuild/linux-x64',
     ],
   },
+  // Webpack configuration for Tailwind CSS v3
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        os: false,
+      };
+    }
+    return config;
+  },
   // Turbopack configuration
   turbopack: {
     rules: {

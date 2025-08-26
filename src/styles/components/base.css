@@ -34,11 +34,11 @@
 }
 
 .table-header {
-  @apply border-b bg-muted/50;
+  @apply border-b bg-muted bg-opacity-50;
 }
 
 .table-row {
-  @apply border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted;
+  @apply border-b transition-colors hover:bg-muted hover:bg-opacity-50 data-[state=selected]:bg-muted;
 }
 
 .table-cell {
@@ -72,7 +72,7 @@
 }
 
 .modal-overlay {
-  @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-sm;
+  @apply fixed inset-0 z-50 bg-background bg-opacity-80 backdrop-blur-sm;
 }
 
 .modal-content {
@@ -117,7 +117,7 @@
 
 /* Header base styles */
 .header {
-  @apply sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60;
+  @apply sticky top-0 z-40 w-full border-b bg-background bg-opacity-95 backdrop-blur supports-[backdrop-filter]:bg-background supports-[backdrop-filter]:bg-opacity-60;
 }
 
 .header-content {
