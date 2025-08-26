@@ -89,18 +89,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   // Handle OAuth login
   const handleOAuthLogin = async (provider: 'google' | 'apple') => {
     try {
-      await login({ provider });
+      // For OAuth login, we need to redirect to the OAuth provider
+      // This should be handled by NextAuth.js, but since we're using custom auth,
+      // we'll need to implement a proper OAuth flow or use a different approach
+      console.log(`OAuth login with ${provider} - redirecting to provider`);
+      
+      // For now, show an error message that OAuth login needs to be implemented
+      // In a real implementation, this would redirect to the OAuth provider
+      throw new Error(`OAuth login with ${provider} is not yet implemented. Please use email login.`);
     } catch (error) {
       console.error('OAuth login failed:', error);
+      // You could show a toast notification here
     }
   };
 
   // Handle OAuth signup
   const handleOAuthSignup = async (provider: 'google' | 'apple') => {
     try {
-      await signup({ provider });
+      // For OAuth signup, we need to redirect to the OAuth provider
+      // This should be handled by NextAuth.js, but since we're using custom auth,
+      // we'll need to implement a proper OAuth flow or use a different approach
+      console.log(`OAuth signup with ${provider} - redirecting to provider`);
+      
+      // For now, show an error message that OAuth signup needs to be implemented
+      // In a real implementation, this would redirect to the OAuth provider
+      throw new Error(`OAuth signup with ${provider} is not yet implemented. Please use email signup.`);
     } catch (error) {
       console.error('OAuth signup failed:', error);
+      // You could show a toast notification here
     }
   };
 
